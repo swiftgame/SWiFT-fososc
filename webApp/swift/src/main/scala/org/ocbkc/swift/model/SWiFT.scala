@@ -70,46 +70,41 @@ class SessionBundle(var textNL:TextNL, var textCTL:TextCTL, var qa: QuestionAtta
 // #BS: only put inforeps that directly represents the subject matter, so no control structures, but only the content produced by the player, etc.
 */
 
-case class TimingInfo(  var startTime: Long, 
-                        var stopTime: Long, 
-                        var startTimeTranslation: Long,
-                        var stopTimeTranslation: Long
-                     )
-{  def this() = this(0,0,0,0)
-}
-
-
 // <&y2011.12.12.22:11:13& Chide: I can do some refactoring later. Tried to be more generic previously, but this stage turned out to early for too much elegance.>
-case class CoreContent( var timingInfo: TimingInfo,
-                        var textNL: String,
-                        var questionNL: String,
-                        var questionCTLcomputer: String,
-                        var textCTLbyComputer: String,
-                        var bridgeCTL2NLcomputer: String,
-                        var algoDefComputer: String,
-                        var answerComputerCTL: String,
-                        var answerComputerNL: String,
-                        var textCTLbyPlayer_ : String,
-                        var constantsByPlayer:Option[List[String]],
-                        var predsByPlayer:Option[List[String]],
-                        var bridgeCTL2NLplayer: String,
-                        var algoDefPlayer: Option[FolnuminquaQuery],
-                        var answerPlayerCTL: String,
-                        var answerPlayerNL: String,
-                        var questionRelatedBridgeStats: String,
-                        var hurelanRole1NL:String,
-                        var hurelanRole2NL:String,
-                        var subjectNL:String,
-                        var answerPlayerCorrect: scala.Boolean
-                      )
-{  def this() = this(new TimingInfo(),"","","","","","","","","",None,None,"",None,"","","","","","",false)
+case class CoreContent()
+{  object startTime extends MappedLong(this)
+   object stopTime extends MappedLong(this)
+   object startTimeTranslation extends MappedLong(this)
+   object stopTimeTranslation extends MappedLong(this)
+   object textNL extends MappedString(this, GlobalConstant.MAXSIZE_FILENAME) // better store file name here and put text in file.
+   var questionNL //object questionNL extends MappedString(this, GlobalConstant.MAXSIZE_FILENAME)
+   var questionCTLcomputer //object questionCTLcomputer extends MappedString(this, GlobalConstant.MAXSIZE_FILENAME)
+   //object textCTLbyComputer extends MappedString(this, GlobalConstant.MAXSIZE_FILENAME)
+   //object bridgeCTL2NLcomputer extends MappedString(this, GlobalConstant.MAXSIZE_FILENAME)
+   //object algoDefComputer extends MappedString(this, GlobalConstant.MAXSIZE_FILENAME)
+   object answerComputerCTL extends MappedString(this, GlobalConstant.MAXSIZE_ANSWER_CTL)
+   object answerComputerNL extends MappedString(this, GlobalConstant.MAXSIZE_ANSWER_NL)
+   //object textCTLbyPlayer_  extends MappedString(this, GlobalConstant.MAXSIZE_FILENAME)
+   var constantsByPlayer:Option[List[String]] // <&y2012.09.17.11:35:50& refactor to mapper using an extra table and join>
+   var predsByPlayer:Option[List[String]] // <&y2012.09.17.11:36:07& ref  refactor to mapper using an extra table and join>
+   object bridgeCTL2NLplayer extends MappedString(this)
+   var algoDefPlayer: Option[FolnuminquaQuery], // <&y2012.09.17.11:36:40& refactor to mapper next increment>
+   object answerPlayerCTL extends MappedString(this)
+   object answerPlayerNL extends MappedString(this)
+   object questionRelatedBridgeStats extends MappedString(this)
+   object hurelanRole1NL extends MappedString(this)
+   object hurelanRole2NL extends MappedString(this)
+   object subjectNL extends MappedString(this)
+   object answerPlayerCorrect extends MappedBoolean(this)
+
+   // delete: def this() = this(new TimingInfo(),"","","","","","","","","",None,None,"",None,"","","","","","",false)
    def durationTranslation:Option[Long] = 
-   {  if(timingInfo.startTimeTranslation == 0 || timingInfo.stopTimeTranslation == 0) None else Some(timingInfo.stopTimeTranslation - timingInfo.startTimeTranslation)
+   {  if(startTimeTranslation.is == 0 || stopTimeTranslation.is == 0) None else Some(stopTimeTranslation.is - startTimeTranslation.is)
    }
 
    var textCTLplayerUpdated4terParsing = false
-   def textCTLbyPlayer = textCTLbyPlayer_
-   def textCTLbyPlayer_=(t:String) = { textCTLplayerUpdated4terParsing = true; textCTLbyPlayer_ = t }
+   def textCTLbyPlayer = textCTLbyPlayer_.is
+   def textCTLbyPlayer_=(t:String) = { textCTLplayerUpdated4terParsing = true; textCTLbyPlayer_(t) }
 
    //var textCTLbyPlayerCleanFormat_ :Option[String] = None
    var textCTLbyPlayerScalaFormat_ :Option[FOLtheory] = None
