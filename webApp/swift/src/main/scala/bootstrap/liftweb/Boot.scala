@@ -24,7 +24,7 @@ import org.ocbkc.swift.test.TestHelpers._
 import org.ocbkc.swift.coord._
 /**
  * A class that's instantiated early and run.  It allows the application
- * to modify lift's environment
+ * to modify lift's environment -- THIS TEXT just to get a new branch
  */
 class Boot {
   def boot {
