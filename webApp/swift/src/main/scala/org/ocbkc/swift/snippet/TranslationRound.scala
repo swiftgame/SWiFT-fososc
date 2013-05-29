@@ -16,7 +16,7 @@ import org.ocbkc.swift.global.GlobalConstant._
 import org.ocbkc.swift.global.TestSettings._
 import org.ocbkc.swift.parser._
 import scala.util.parsing.combinator.Parsers //{Success, Failure}
-
+import org.ocbkc.swift.global.Logging._
 
 class TranslationRound
 {  val sesCoordLR = sesCoord.is; // extract session coordinator object from session variable.
@@ -25,7 +25,7 @@ class TranslationRound
 
    def render(ns: NodeSeq): NodeSeq =
    {  def processSubmission() = 
-      {  println("processSubmission called")
+      {  log("processSubmission called")
 
          // check errors on submission here
          
