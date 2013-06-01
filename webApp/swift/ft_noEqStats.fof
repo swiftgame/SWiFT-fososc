@@ -1,0 +1,2 @@
+fof(form0, axiom, p(a,b)).
+fof(form1, question, ? [PVx] : p(a,PVx)).
