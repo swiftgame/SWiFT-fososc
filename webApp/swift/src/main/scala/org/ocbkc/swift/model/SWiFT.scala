@@ -83,6 +83,7 @@ class SessionBundle(var textNL:TextNL, var textCTL:TextCTL, var qa: QuestionAtta
 
 /** @param startTime represents the starttime of the fluency game session.
   * @param startTimeTranslation contains the start time of the translation round. Note that its content may in many cases be equal to startTime.
+    @todo add first chosen consti (redundant, but very handy)
   */
 
 // <&y2011.12.12.22:11:13& Chide: I can do some refactoring later. Tried to be more generic previously, but this stage turned out to early for too much elegance.>

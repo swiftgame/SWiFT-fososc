@@ -538,6 +538,13 @@ getHistory.length, commitIdsReleases.length, isRelease
          commitIdsReleases ::= ci
       }
    }
+
+   /** Retrieves the playing-session history of this consti, sorted by date. That is: all CoreContent objects in which this Consti was chosen as the first consti by the associated player, and more over, only CoreContent objects which are not disregarded for calculating the score of the fluency game.
+     * @todo &y2013.08.10.18:48:31& use memoization for efficiency imrpovement.
+     */
+   def fluencyGameSessionHistory:List[CoreContent] =
+   {  CoreContent.find{ By}
+   }
 }
 
 class FollowerConsti_join extends LongKeyedMapper[FollowerConsti_join] with IdPK
