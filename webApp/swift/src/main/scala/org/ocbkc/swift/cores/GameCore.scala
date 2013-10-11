@@ -1,4 +1,4 @@
-// change this when moving the project.// <&y2011.11.07.13:19:35& perhaps in future move gamecore to own package>
+// change this when moving the project.// <&y2011.11.07.13:19:35& perhaps in future move fluencyChallenge to own package>
 package org.ocbkc.swift.cores
 {  
 import org.ocbkc.swift.logilang._
@@ -22,33 +22,33 @@ import net.liftweb.json.ext._
 - Names of classes correspond with design $JN/...
 
 BS:
-- Inforepresentations which form part of the *state* of the gamecore, are stored as property (and not passed as arguments to methods who are using them).
-- For convenience, however, methods do return the requested inforeps, even if they can also be read from the gamecore state. 
+- Inforepresentations which form part of the *state* of the fluencyChallenge, are stored as property (and not passed as arguments to methods who are using them).
+- For convenience, however, methods do return the requested inforeps, even if they can also be read from the fluencyChallenge state. 
 */
 
 import Round._
 
 // specifically intended for 'ad hoc' return types.
-package gameCoreHelperTypes
+package fluencyChallengeHelperTypes
 {  class QuestionAndCorrectAnswer(questionNL:String, questionCTLcomputer:String)
 }
 
-import gameCoreHelperTypes._
+import fluencyChallengeHelperTypes._
 
-trait TraitGameCore
+trait FluencyChallenge
 {  // SHOULDDO: how to initialize a val of this trait in a subclass of this trait? (would like to do that with playerId)
-   val gameCoreName:String
+   val challengeName:String
    val playerId:Long
    var si:SessionInfo
 
    def initialiseSessionInfo:SessionInfo = // <does this really belong here?>
    {  si = new SessionInfo
-      si.gameCoreName(gameCoreName).save
+      si.challengeName(challengeName).save
       si.userId(playerId).save
       si
    }
    def generateText:String
-   def algorithmicDefenceGenerator:FolnuminquaQuery =
+   def algorithmicDefenceGenerator:CTFqueryFolnuminquaQuery =
    def generateQuestionAndCorrectAnswer:QuestionAndCorrectAnswer
    def doAlgorithmicDefence:(scala.Boolean, String, String, String)
    // <&y2011.11.17.18:49:46& or should I change the type of text and trans to the Text class etc. see model package.>
@@ -56,7 +56,7 @@ trait TraitGameCore
 
 /*
 <&y2011.12.12.16:16:58& refactor: either work with:
-- providing input info by setting properties of the gamecore class, and then calling the methodwhich uses them
+- providing input info by setting properties of the fluencyChallenge class, and then calling the methodwhich uses them
 - provide all inputs through the parameters of the method...
 Don't mix, that is confusing.
 Or perhaps: find out a "design rule of thumb" which allows mixing them in a non-confusing way.
@@ -64,10 +64,10 @@ Or perhaps: find out a "design rule of thumb" which allows mixing them in a non-
 */
 
 // helper class for return type of generateQuestionAndCorrectAnswer
-//*/ { BUC
 
-class Efe(val playerIdInit:Long) extends TraitGameCore
-{  val gameCoreName="efe"
+
+class EfeChallenge(val playerIdInit:Long) extends FluencyChallenge
+{  val challengeName="efe"
    def initialiseSessionInfo:SessionInfo =
    {  super.initialiseSessionInfo
       null // <finish>
@@ -85,19 +85,18 @@ class Efe(val playerIdInit:Long) extends TraitGameCore
       si.hurelanRole2NL = "hurelanRole2NL"
       si.bridgeCTL2NLcomputer = "bridgeCTL2NLcomputer"
    }
-
+/*   { BUC
    def generateText:String
    def algorithmicDefenceGenerator:FolnuminquaQuery
    def generateQuestionAndCorrectAnswer:QuestionAndCorrectAnswer
    def doAlgorithmicDefence:(scala.Boolean, String, String, String)
    // <&y2011.11.17.18:49:46& or should I change the type of text and trans to the Text class etc. see model package.>
-
+*/// } EUC
 }
-//} EUC
 
-class NotUna(val playerIdInit:Long) extends TraitGameCore
+class NotUnaChallenge(val playerIdInit:Long) extends FluencyChallenge
 {  //var translation: String = ""
-   val gameCoreName="NotUna"
+   val challengeName="NotUna"
    val playerId = playerIdInit
    var si:SessionInfo = null
    /* This doesn't only generate the text, but everything: the ctf text, the nl text, the question for the attack, and the answer based on the text. (Note that for the latter, the Clean program actually applies the reasoner to textCTLbyComputer, it is not "baked in".)      
@@ -180,11 +179,11 @@ class NotUna(val playerIdInit:Long) extends TraitGameCore
       si
    }
 
-   def algorithmicDefenceGenerator:FolnuminquaQuery = 
+   def algorithmicDefenceGenerator():CTFQuery = 
    {  // generate algo. defence (=, or better coincides with reasoning goal) for translation created by the player.     
    
       // <&y2011.12.11.19:40:54& make naming consistent (naming for algodef4player) throughout all source code>
-      // <&y2011.12.12.16:27:40& Build in test whether all required GameCore properties are set>
+      // <&y2011.12.12.16:27:40& Build in test whether all required FluencyChallenge properties are set>
       err.println("algorithmicDefenceGenerator: start")
       // <&y2012.05.07.18:49:04& rewrite in SWiFT format>
       val bridgeCTL2NLplayerCleanFormat = HurelanBridge.parseAll(HurelanBridge.bridge, si.bridgeCTL2NLplayer)  match { case HurelanBridge.Success(result,_) => result; case _ => throw new RuntimeException(" Error while parsing bridgeCTL2NLplayer") }

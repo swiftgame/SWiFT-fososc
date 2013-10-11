@@ -2,8 +2,8 @@ package org.ocbkc.swift.global
 {  
 //import org.ocbkc.swift.model._
 //import System._
-//import org.ocbkc.swift.cores.{TraitGameCore, NotUna}
-//import org.ocbkc.swift.cores.gameCoreHelperTypes._
+//import org.ocbkc.swift.cores.{TraitFluencyChallenge, NotUna}
+//import org.ocbkc.swift.cores.fluencyChallengeHelperTypes._
 /* Conventions:
 - Names of classes correspond with design $JN/...
 - CTL = Computationally Transparent Language
@@ -31,7 +31,7 @@ object GlobalConstant
    /* 
     * Dependency usage: first run mvn dependency:unpack
     * global.scala will check if you're running windows, mac or linux
-    * BINARIES is only used in GameCore.Scala
+    * BINARIES is only used in FluencyChallenge.Scala
     * Eprover_Path is only used in tpwrap.scala
     * Paradox_Path is only used in tpwrap.scala
     */

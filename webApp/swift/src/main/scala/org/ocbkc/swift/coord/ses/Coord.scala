@@ -15,8 +15,8 @@ import org.ocbkc.swift.OCBKC.scoring._
 import org.ocbkc.swift.OCBKC.ConstitutionTypes._
 import org.ocbkc.swift.test._
 import System._
-import org.ocbkc.swift.cores.{TraitGameCore, NotUna}
-import org.ocbkc.swift.cores.gameCoreHelperTypes._
+import org.ocbkc.swift.cores.{TraitFluencyChallenge, NotUna}
+import org.ocbkc.swift.cores.fluencyChallengeHelperTypes._
 import net.liftweb.json._
 import java.io._
 
@@ -59,7 +59,7 @@ case object NotInFluencySession extends RoundFluencySession
 trait CoreTrait
 {  var si: SessionInfo = null
    val sesHis = new SessionHistory()
-   val gameCore: TraitGameCore = new NotUna(currentPlayer.id.get)
+   val fluencyChallenge: TraitFluencyChallenge = new NotUna(currentPlayer.id.get)
 
    def currentPlayer:Player
    val currentPlayerId = currentPlayer.id.get
@@ -90,7 +90,7 @@ trait CoreTrait
 
    def URstartTranslation:String =  
    {  latestRoundFluencySession = RoundTranslation
-      si = gameCore.initialiseSessionInfo
+      si = fluencyChallenge.initialiseSessionInfo
       si.startTime(SystemWithTesting.currentTimeMillis).save
       si.startTimeTranslation(si.startTime.is).save
       si.textNL
@@ -104,13 +104,13 @@ trait CoreTrait
 
    def URstartAlgorithmicDefenceStage1:FolnuminquaQuery =
    {  latestRoundFluencySession = RoundAlgorithmicDefenceStage1
-      gameCore.algorithmicDefenceGenerator
+      fluencyChallenge.algorithmicDefenceGenerator
    }
 
    /** @todo &y2013.05.09.17:31:41& perhaps better move session storing to URstopTranslation.
      */
    def URstartAlgorithmicDefenceStage2:(scala.Boolean, String, String, String) =
-   {  val res = gameCore.doAlgorithmicDefence
+   {  val res = fluencyChallenge.doAlgorithmicDefence
       // Session completed: store this session for future analysis/score calculations
       // now:Calendar = System.currentTimeMillis()
       si.stopTime(System.currentTimeMillis).save
@@ -230,7 +230,7 @@ class Core(/* val player: User, var text: Text,v ar round: Round */) extends Cor
 /*
    def URstartTranslation:String =  
    {  round = Trans
-      si = gameCore.initialiseSessionInfo
+      si = fluencyChallenge.initialiseSessionInfo
       si.startTime(System.currentTimeMillis).save
       si.startTimeTranslation(si.startTime.is).save
       si.textNL
@@ -247,15 +247,15 @@ class Core(/* val player: User, var text: Text,v ar round: Round */) extends Cor
 
    def URstartQuestionAttack:QuestionAndCorrectAnswer = 
    {  latestRoundFluencySession = RoundQuestionAttack
-      gameCore.generateQuestionAndCorrectAnswer
+      fluencyChallenge.generateQuestionAndCorrectAnswer
    }
 /*
    def URstartAlgorithmicDefenceStage1:FolnuminquaQuery =
-   {  gameCore.algorithmicDefenceGenerator
+   {  fluencyChallenge.algorithmicDefenceGenerator
    }
 
    def URstartAlgorithmicDefenceStage2:(scala.Boolean, String, String, String) =
-   {  val res = gameCore.doAlgorithmicDefence
+   {  val res = fluencyChallenge.doAlgorithmicDefence
       // Session completed: store this session for future analysis/score calculations
       // now:Calendar = System.currentTimeMillis()
       si.stopTime(System.currentTimeMillis).save

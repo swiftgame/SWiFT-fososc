@@ -108,7 +108,7 @@ case class SessionInfo( var textNL: String,
                       ) extends LongKeyedMapper[SessionInfo] with IdPK
 {  def getSingleton = SessionInfoMetaMapperObj
    // object player extends MappedLongForeignKey(this, Player)
-   object gameCoreName extends MappedString(this, 100)
+   object fluencyChallengeName extends MappedString(this, 100)
    object startTime extends MappedLong(this)
    object stopTime extends MappedLong(this)
    object startTimeTranslation extends MappedLong(this)

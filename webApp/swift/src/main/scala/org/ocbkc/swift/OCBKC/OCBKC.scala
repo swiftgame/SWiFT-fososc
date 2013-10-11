@@ -2,8 +2,8 @@ package org.ocbkc.swift.OCBKC
 {
 import _root_.scala.xml._
 import System._
-import org.ocbkc.swift.cores.{TraitGameCore, NotUna}
-import org.ocbkc.swift.cores.gameCoreHelperTypes._
+import org.ocbkc.swift.cores.{TraitFluencyChallenge, NotUna}
+import org.ocbkc.swift.cores.fluencyChallengeHelperTypes._
 import org.ocbkc.swift.global._
 import org.ocbkc.swift.global.Logging._
 import org.ocbkc.swift.global.ScalaHelpers._
@@ -713,7 +713,7 @@ case class TimeInterval(val startTime:Long, val endTime:Long)
 object OCBKCinfoPlayer
 {
    /** @todo coulddo: optimise by caching/memoization/incremental update of cached value?
-     @ @todo move to gamecore library, because this is not a OCBKC specific method.
+     @ @todo move to fluencyChallenge library, because this is not a OCBKC specific method.
      */
    def numberOfSessionsPlayedBy(p:Player) =
    {  val sis:List[SessionInfo] = PlayerSessionInfo_join.findAll( By(PlayerSessionInfo_join.player, p) ).map( join => join.sessionInfo.obj.open_! )
