@@ -12,8 +12,8 @@ Abbreviation for constitution: consti (const is to much similar to constant).
 
 // not complete FOL yet
 
-// each FOL theory is associated with its own list of predicate and constant symbols, I.e. there may be more constants with the same name and id, as long as they are partr
-class FOLtheory extends FOLutils with CTFdocument
+// each FOL theory is associated with its own list of predicate and constant symbols, I.e. there may be more constants with the same name and id, as long as they are part
+class FOLtheory extends FOLutils // with CTLdocument // <&y2013.10.26.17:32:47& define type CTLdocument>
 {  // <&y2012.04.03.22:31:27& constants and predicates could also be represented as hashmaps for more efficiency>
    var constants:List[Constant]     = Nil // [&y2012.04.13.09:39:59& as far as I can see, I don't really need this list.]
    var predicates:List[Predicate]   = Nil // [&y2012.04.13.09:40:13& this is really needed, to check whether a new predicate-application MAY be added (arity-check)]

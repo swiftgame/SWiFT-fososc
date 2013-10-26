@@ -53,6 +53,7 @@ trait FluencyChallenge
       parseWarningMsgTxtCTLplayer = if(si.textCTLbyPlayer.equals("")) "Warning: empty file." else ""  // <&y2012.05.19.20:27:13& replace with regex for visually empty file (thus file with only space characters, like space, newline, tab etc.>
 
       // orginal: Folminqua2FOLtheoryParser.parseAll(Folminqua2FOLtheoryParser.folminquaTheory, textCTLbyPlayer) match
+      /* { BUC <&y2013.10.26.17:30:05& I reconsidered this: ftl at this level of abstraction is not elegant. At this level, not assumption should be made about the CTL.>
       parserCTLsingleton.parseAll(parserCTL, si.textCTLbyPlayer) match
          {  case parserCTLsingleton.Success(ftl,_)         => {  si.textCTLbyPlayerScalaFormat_ = Some(ftl)
                                                                         si.constantsByPlayer           = Some(ftl.constants.map({ case Constant(id) => id }))
@@ -68,15 +69,17 @@ trait FluencyChallenge
                                                                         false 
                                                                      }
          }
+         } EUC */
+         true // <&y2013.10.26.17:31:02& change>
    }
    def initialiseSessionInfo:SessionInfo = // <does this really belong here?>
    {  si = new SessionInfo
-      si.challengeName(challengeName).save
+      si.fluencyChallengeName(fluencyChallengeName).save
       si.userId(playerId).save
       si
    }
    def generateText:String
-   def algorithmicDefenceGenerator:CTFqueryFolnuminquaQuery
+   def algorithmicDefenceGenerator:Any // should be CTLquery <&y2013.10.26.17:32:10& define type CTLquery>
    def generateQuestionAndCorrectAnswer:QuestionAndCorrectAnswer
    def doAlgorithmicDefence:(scala.Boolean, String, String, String)
    // <&y2011.11.17.18:49:46& or should I change the type of text and trans to the Text class etc. see model package.>
@@ -212,7 +215,7 @@ class NotUnaChallenge(val playerIdInit:Long) extends FluencyChallenge
       si
    }
 
-   def algorithmicDefenceGenerator():CTFQuery = 
+   def algorithmicDefenceGenerator():CTLquery = 
    {  // generate algo. defence (=, or better coincides with reasoning goal) for translation created by the player.     
    
       // <&y2011.12.11.19:40:54& make naming consistent (naming for algodef4player) throughout all source code>

@@ -15,7 +15,7 @@ import org.ocbkc.swift.OCBKC.scoring._
 import org.ocbkc.swift.OCBKC.ConstitutionTypes._
 import org.ocbkc.swift.test._
 import System._
-import org.ocbkc.swift.cores.{TraitFluencyChallenge, NotUna}
+import org.ocbkc.swift.cores.{FluencyChallenge, NotUnaChallenge}
 import org.ocbkc.swift.cores.fluencyChallengeHelperTypes._
 import net.liftweb.json._
 import java.io._
@@ -59,7 +59,7 @@ case object NotInFluencySession extends RoundFluencySession
 trait CoreTrait
 {  var si: SessionInfo = null
    val sesHis = new SessionHistory()
-   val fluencyChallenge: TraitFluencyChallenge = new NotUna(currentPlayer.id.get)
+   val fluencyChallenge:FluencyChallenge = new NotUnaChallenge(currentPlayer.id.get)
 
    def currentPlayer:Player
    val currentPlayerId = currentPlayer.id.get
@@ -267,9 +267,9 @@ class Core(/* val player: User, var text: Text,v ar round: Round */) extends Cor
 */
 // <&y2012.02.21.19:22:56& refactor by using built-in parser.?>
    def testSyntaxTranslation:String = 
-   {  gameCore.parseTextCTLbyPlayer
-      val warn = gameCore.parseWarningMsgTxtCTLplayer
-      if(!warn.equals("")) warn else gameCore.parseErrorMsgTextCTLplayer
+   {  fluencyChallenge.parseTextCTLbyPlayer
+      val warn = fluencyChallenge.parseWarningMsgTxtCTLplayer
+      if(!warn.equals("")) warn else fluencyChallenge.parseErrorMsgTextCTLplayer
    }
 
    def testSyntaxBridge = 

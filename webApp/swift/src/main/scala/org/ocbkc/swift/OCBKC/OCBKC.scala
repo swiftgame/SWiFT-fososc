@@ -2,7 +2,7 @@ package org.ocbkc.swift.OCBKC
 {
 import _root_.scala.xml._
 import System._
-import org.ocbkc.swift.cores.{TraitFluencyChallenge, NotUna}
+import org.ocbkc.swift.cores.{FluencyChallenge, NotUnaChallenge}
 import org.ocbkc.swift.cores.fluencyChallengeHelperTypes._
 import org.ocbkc.swift.global._
 import org.ocbkc.swift.global.Logging._
