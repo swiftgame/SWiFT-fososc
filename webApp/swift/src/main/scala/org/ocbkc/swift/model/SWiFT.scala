@@ -86,6 +86,9 @@ class SessionBundle(var textNL:TextNL, var textCTL:TextCTL, var qa: QuestionAtta
   */
 
 // <&y2011.12.12.22:11:13& Chide: I can do some refactoring later. Tried to be more generic previously, but this stage turned out to early for too much elegance.>
+/** SessionInfo is general: it can hold data of any SWiFT challenge. Therefore, for example, specific parsers (for specific KR languages are not defined here, but in the GameCore.
+  */
+
 case class SessionInfo( var textNL: String,
                         var questionNL: String,
                         var questionCTLcomputer: String,
@@ -183,31 +186,8 @@ case class SessionInfo( var textNL: String,
       }
    }
    */
-   def ParseTextCTLbyPlayer:Boolean = 
-   {  println("ParseTextCTLbyPlayer called")
-      textCTLplayerUpdated4terParsing = false
-      if(textCTLbyPlayer.equals("")) parseWarningMsgTxtCTLplayer = "Warning: empty file." else parseWarningMsgTxtCTLplayer = ""  // <&y2012.05.19.20:27:13& replace with regex for visually empty file (thus file with only space characters, like space, newline, tab etc.>
 
-      Folminqua2FOLtheoryParser.parseAll(Folminqua2FOLtheoryParser.folminquaTheory, textCTLbyPlayer) match
-         {  case Folminqua2FOLtheoryParser.Success(ftl,_)         => {  textCTLbyPlayerScalaFormat_ = Some(ftl)
-                                                                        constantsByPlayer           = Some(ftl.constants.map({ case Constant(id) => id }))
-                                                                        predsByPlayer               = Some(ftl.predicates.map(pred => pred.name))
-                                                                        parseErrorMsgTextCTLplayer = ""
-                                                                        true
-                                                                     }
-            case failMsg@Folminqua2FOLtheoryParser.Failure(_,_)   => {  textCTLbyPlayerScalaFormat_   = None
-                                                                        constantsByPlayer             = None
-                                                                        predsByPlayer                 = None
-                                                                        println("  parse error: " + failMsg.toString)
-                                                                        parseErrorMsgTextCTLplayer = failMsg.toString
-                                                                        false 
-                                                                     }
-         }
-   }
 
-   var parseErrorMsgTextCTLplayer:String = ""
-   var parseWarningMsgTxtCTLplayer:String = ""
-   /* <&y2012.09.26.12:38:17& COULDDO perhaps refactor: call the serialize method from SessionInfoMetaMapperObj.save (by overriding the latter method). Without additional checks, that will however be less efficient, because at each save invocation a lot will be written over and over to disk...> */
    def serialize =
    {  implicit val formats = Serialization.formats(NoTypeHints)
       var siSer:String = Serialization.write(this)

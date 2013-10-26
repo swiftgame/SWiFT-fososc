@@ -14,9 +14,10 @@ import scala.util.matching.Regex._
 import java.io._
 //import java.lang._
 import org.ocbkc.swift.parser._
+
 import net.liftweb.json._
 import net.liftweb.json.ext._
-//import scala.util.parsing.combinator.Parsers
+import scala.util.parsing.combinator.Parsers
 
 /* Conventions:
 - Names of classes correspond with design $JN/...
@@ -40,7 +41,34 @@ trait FluencyChallenge
    val challengeName:String
    val playerId:Long
    var si:SessionInfo
+   def getParserCTLsingleton:SWiFTparser
+   val parserCTLsingleton = getParserCTLsingleton
+   val parserCTL:Parser[SWiFTparser] // <String should be replaced with the right type>
+   var parseWarningMsgTxtCTLplayer:String = ""
+   var parseErrorMsgTextCTLplayer:String = ""
 
+   def parseTextCTLbyPlayer:Boolean = 
+   {  println("ParseTextCTLbyPlayer called")
+      si.textCTLplayerUpdated4terParsing = false
+      parseWarningMsgTxtCTLplayer = if(si.textCTLbyPlayer.equals("")) "Warning: empty file." else ""  // <&y2012.05.19.20:27:13& replace with regex for visually empty file (thus file with only space characters, like space, newline, tab etc.>
+
+      // orginal: Folminqua2FOLtheoryParser.parseAll(Folminqua2FOLtheoryParser.folminquaTheory, textCTLbyPlayer) match
+      parserCTLsingleton.parseAll(parserCTL, si.textCTLbyPlayer) match
+         {  case parserCTLsingleton.Success(ftl,_)         => {  si.textCTLbyPlayerScalaFormat_ = Some(ftl)
+                                                                        si.constantsByPlayer           = Some(ftl.constants.map({ case Constant(id) => id }))
+                                                                        si.predsByPlayer               = Some(ftl.predicates.map(pred => pred.name))
+                                                                        parseErrorMsgTextCTLplayer = ""
+                                                                        true
+                                                                     }
+            case failMsg@getParserCTLsingleton.Failure(_,_)   => {  textCTLbyPlayerScalaFormat_   = None
+                                                                        si.constantsByPlayer             = None
+                                                                        si.predsByPlayer                 = None
+                                                                        println("  parse error: " + failMsg.toString)
+                                                                        parseErrorMsgTextCTLplayer = failMsg.toString
+                                                                        false 
+                                                                     }
+         }
+   }
    def initialiseSessionInfo:SessionInfo = // <does this really belong here?>
    {  si = new SessionInfo
       si.challengeName(challengeName).save
@@ -48,7 +76,7 @@ trait FluencyChallenge
       si
    }
    def generateText:String
-   def algorithmicDefenceGenerator:CTFqueryFolnuminquaQuery =
+   def algorithmicDefenceGenerator:CTFqueryFolnuminquaQuery
    def generateQuestionAndCorrectAnswer:QuestionAndCorrectAnswer
    def doAlgorithmicDefence:(scala.Boolean, String, String, String)
    // <&y2011.11.17.18:49:46& or should I change the type of text and trans to the Text class etc. see model package.>
@@ -65,10 +93,12 @@ Or perhaps: find out a "design rule of thumb" which allows mixing them in a non-
 
 // helper class for return type of generateQuestionAndCorrectAnswer
 
-
 class EfeChallenge(val playerIdInit:Long) extends FluencyChallenge
 {  val challengeName="efe"
-   def initialiseSessionInfo:SessionInfo =
+   var si:SessionInfo = null
+   val playerId = playerIdInit
+
+   override def initialiseSessionInfo:SessionInfo =
    {  super.initialiseSessionInfo
       null // <finish>
       si.textNL = "Todo algorithm for generating efechallenge natural language text" 
@@ -84,12 +114,13 @@ class EfeChallenge(val playerIdInit:Long) extends FluencyChallenge
       si.hurelanRole1NL = "hurelanRole1NL"
       si.hurelanRole2NL = "hurelanRole2NL"
       si.bridgeCTL2NLcomputer = "bridgeCTL2NLcomputer"
+      si
    }
 /*   { BUC
-   def generateText:String
-   def algorithmicDefenceGenerator:FolnuminquaQuery
-   def generateQuestionAndCorrectAnswer:QuestionAndCorrectAnswer
-   def doAlgorithmicDefence:(scala.Boolean, String, String, String)
+   def generateText = "todo"
+   def algorithmicDefenceGenerator:FolnuminquaQuery = null // <TODO>
+   def generateQuestionAndCorrectAnswer:QuestionAndCorrectAnswer = null // <TODO>
+   def doAlgorithmicDefence:(scala.Boolean, String, String, String) = null // <TODO>
    // <&y2011.11.17.18:49:46& or should I change the type of text and trans to the Text class etc. see model package.>
 */// } EUC
 }
@@ -101,6 +132,8 @@ class NotUnaChallenge(val playerIdInit:Long) extends FluencyChallenge
    var si:SessionInfo = null
    /* This doesn't only generate the text, but everything: the ctf text, the nl text, the question for the attack, and the answer based on the text. (Note that for the latter, the Clean program actually applies the reasoner to textCTLbyComputer, it is not "baked in".)      
    */
+
+   /* <&y2012.09.26.12:38:17& COULDDO perhaps refactor: call the serialize method from SessionInfoMetaMapperObj.save (by overriding the latter method). Without additional checks, that will however be less efficient, because at each save invocation a lot will be written over and over to disk...> */
 
    override def initialiseSessionInfo:SessionInfo = 
    {  // regex must contain exactly 1 group which will be returned as a match.
