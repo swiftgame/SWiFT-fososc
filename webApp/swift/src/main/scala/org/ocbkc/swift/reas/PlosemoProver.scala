@@ -15,6 +15,13 @@ import org.ocbkc.swift.test.CLIwithFileInput
 import org.ocbkc.swift.global.Logging._
 import org.specs2.mutable._
 
+/* &y2013.12.05.19:48:04& WIW:
+- tried to run mvn specs2:run-specs, but there is nothing in target/test-classes, I think I have to put the PlosemoProverSpec class in another spot (see pom.xml!)
+
+*/
+
+/** @todo doesn't work yet, solve this
+  */
 class PlosemoProverSpec extends Specification
 {  val predicateB = Predicate("B",1)
    val plosemoQuery = MostInfo(PatVar("s"), Forall(Var("x"), PatVar("s"), PredApp(predicateB, List(Var("x")))))
@@ -23,11 +30,15 @@ class PlosemoProverSpec extends Specification
 
    val queryResult = Prover.query(plosemoQuery, folTheory)
 
+   "Prover.query(plosemoQuery, folTheory) is null: " ! ( queryResult == null )
+   
+   /*
    "Prover.query(plosemoQuery, folTheory)" should
    {  " equal null, because we are still testing" in
-      {  queryResult must be equalTo(null)
+      {  queryResult must beEqualTo(1)
       }
    }
+   */
    /*
    "The 'Hello world' string" should {
  "contain 11 characters" in {
@@ -43,8 +54,7 @@ class PlosemoProverSpec extends Specification
 
 object TestPlosemoProverCLI extends CLIwithFileInput
 {  def main(args: Array[String]) =
-   {   
-      if( args.length != 0 ) println("Usage: command (without parameters)")
+   {  if( args.length != 0 ) println("Usage: command (without parameters)")
       else
       {  val predicateB = Predicate("B",1)
          val plosemoQuery = MostInfo(PatVar("s"), Forall(Var("x"), PatVar("s"), PredApp(predicateB, List(Var("x")))))
