@@ -35,7 +35,7 @@ so in this case:
 case class PredicateBridgeSent(predCTLname: List[String], predNLname: List[String]) extends BroneSent
 
 case class EntityBridgeSent(entCTLname: List[String], entNLname: List[String]) extends BroneSent
-{  // <&y2014.01.03.09:44:35& apply method which check whether there is at least one element. TODO by Mussie...
+{  // <&y2014.01.03.09:44:35& apply method which check whether there is at least one element. TODO by Mussie....
 }
 
 class BridgeDoc
