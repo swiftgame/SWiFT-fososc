@@ -72,7 +72,7 @@ trait TraitGameCore[QuerySent__TP/* __TP = Type Parameter */ <: QuerySent, Answe
    }
    def generateText:String
    def algorithmicDefenceGenerator:QuerySent__TP
-   def generateQuestionAndCorrectAnswer:QuestionAndCorrectAnswer
+   def generateQuestionsAndCorrectAnswers:QuestionAndCorrectAnswer
    
    case class AlgorithmicDefenceResult(answerCorrect:Boolean, answerPlayerNL:String, reasonerComment:String, answerPlayerCTL:AnswerLangSent__TP)
    def doAlgorithmicDefence:AlgorithmicDefenceResult
@@ -102,7 +102,7 @@ object EfeChallengeTypes
 }
 
 
-// helper class for return type of generateQuestionAndCorrectAnswer
+// helper class for return type of generateQuestionsAndCorrectAnswers
 /** Specifications can be found in the following documents in the same git repository:
   * TODOdefaultCommandForOpening ./specs/NotUna_FluencyGame_TODO_SCAN.pdf 
   */
@@ -227,7 +227,7 @@ class EfeLang(val playerIdInit:Long) extends TraitGameCore[EfeQuerySent_rb, EfeA
       ret
    }
 
-   def generateQuestionAndCorrectAnswer:QuestionAndCorrectAnswer = null // <TODO>
+   def generateQuestionsAndCorrectAnswers:QuestionAndCorrectAnswer = null // <TODO>
 
    /** @todo check answer correct with  BridgeBasedAutoFofaTranslator, instead of comparing the translations to natural language. The latter may be prone to errors, because different translations may exist for the same CTL sentence.
      */
@@ -393,7 +393,7 @@ class NotUna(val playerIdInit:Long) extends TraitGameCore
    }
 
 
-   def generateQuestionAndCorrectAnswer:QuestionAndCorrectAnswer =
+   def generateQuestionsAndCorrectAnswers:QuestionAndCorrectAnswer =
    {  new QuestionAndCorrectAnswer(si.questionNL, si.questionCTLcomputer) // it has already been done in this increment, so no additional calculations are required.
    }
 

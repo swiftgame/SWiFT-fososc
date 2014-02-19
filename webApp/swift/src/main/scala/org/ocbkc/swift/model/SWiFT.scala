@@ -96,12 +96,15 @@ Note: _pf = pure format
   * @param textCTLbyPlayer_ This is a String, and not a RepresentationBundle, because a player can have entered a syntactically incorrect document.
   */
 
+case class QuestionAndAnswerCTL(val EfeQuerySent_rb, var Option[EfeAnswerLangSent])
+
+
 case class SessionInfo( var textNL: String,
                         var questionNL: String,
                         var questionCTLcomputer_rb: Option[EfeQuerySent_rb],
                         var textCTLbyComputer: Option[FOLtheory],
                         var bridgeCTL2NLcomputer: Option[BridgeDoc],
-                        var algoDefComputer_rb: Option[EfeQuerySent_rb],
+                        var algoDefComputer_rb: List[EfeQuerySent_rb],
                         var answerComputerCTL: Option[EfeAnswerLangSent],
                         var answerComputerNL: String,
                         var textCTLbyPlayer_ : String, // don't change this one directly.
