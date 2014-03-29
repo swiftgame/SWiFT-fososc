@@ -151,8 +151,7 @@ trait CoreTrait[QuerySent__TP <: QuerySent, AnswerLangSent__TP <: CTLsent]
          si.startTimeTranslation(si.startTime.is).save
          log("Choose a random release for this player")
          val randomSeq = new Random()
-         URchooseFirstConstitution(RandomExtras.pickRandomElementFromList(Constitution.constisWithPlayableReleases, randomSeq).get.constiId) // get must work because there are unevaluated constis.
-
+         log("[BUG] in this branch consti gets chosen again while it already has been chosen. This is already solved in another git-branch, so just wait until merge."); URchooseFirstConstitution(RandomExtras.pickRandomElementFromList(Constitution.constisWithPlayableReleases, randomSeq).get.constiId) // get must work because there are unevaluated constis.  
          Some(si.textNL)
       }
    }
