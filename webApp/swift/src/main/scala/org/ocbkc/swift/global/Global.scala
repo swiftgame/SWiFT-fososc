@@ -97,7 +97,7 @@ object GlobalConstant
      */
    object AverageFluency extends ScoringConstants
    {  val minimalSampleSizePerPlayer   = AveragePercentageCorrect.minimalNumberOfSessionsPerPlayer
-      val minimalSampleSizePerConsti   = 2
+      val minimalSampleSizePerConsti   = 10
       val fluencyConstantK             = 1000000
    }
 
