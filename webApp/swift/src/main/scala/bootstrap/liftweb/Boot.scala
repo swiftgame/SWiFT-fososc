@@ -153,9 +153,20 @@ class Boot
 
       //def playerIsLoggedInAndPlayed minSessionsPerPlayer
 
+   // <move to global>
+   abstract class AbstractApplicationMode
+   case class NormalAppMode extends AbstractApplicationMode
+   case class Fluencygame_exp_2014_07_03_AppMode extends AbstractApplicationMode
+   case class Contigame_exp_1_AppMode extends AbstractApplicationMode
+
+   val applicationMode = NormalAppMode
+   def normalAppmode = (applicationMode == NormalAppMode)
+   def fluencygame_exp_2014_07_03_AppMode = (applicationMode == Fluencygame_exp_2014_07_03_AppMode)
+
       def sitemap() = SiteMap(
       Menu("Home") / "index" >> Player.AddUserMenusAfter, // Simple menu form
-      Menu(Loc("Help", "generalHelp" :: Nil, "Help")),
+      Menu(Loc("Help", "generalHelp" :: Nil, "Help", If(() => normalAppMode, () => RedirectResponse("/index")))),
+      Menu(Loc("Help", "fluencyGameHelp" :: Nil, "Help", If(() => fluencygame_exp_2014_07_03_AppMode, () => RedirectResponse("/index")))),
       //Menu(Loc("About", "aboutPage" :: Nil, "About")),
       Menu(Loc("Constitutions", "constitutions" :: Nil, "Constitutions", 
          If(() =>
@@ -225,8 +236,18 @@ class Boot
                If( () => ( playerIsLoggedIn && !playerIsAdmin(currentPlayer) ), () => RedirectResponse("/index"))
             )
          )
-      )
-   ,
+      ),
+      // this one only for fluencygame_exp_2014_07_03. Is this still needed, I see it is hidden...
+      // {
+      Menu(
+         Loc(
+            "fluencygame_exp_2014_07_03",
+            new Link("fluencygame_exp_2014_07_03" :: "instructions" :: Nil, true),
+            "If you see this, something is wrong: should be hidden",
+            List( Hidden )
+            )
+      ),
+      // }
       Menu(Loc("all", Nil -> true, "If you see this, something is wrong: should be hidden", Hidden))
     )
 
