@@ -160,13 +160,16 @@ class Boot
    case class Contigame_exp_1_AppMode extends AbstractApplicationMode
 
    val applicationMode = NormalAppMode
-   def normalAppmode = (applicationMode == NormalAppMode)
+
+   def normalAppMode = (applicationMode == NormalAppMode)
    def fluencygame_exp_2014_07_03_AppMode = (applicationMode == Fluencygame_exp_2014_07_03_AppMode)
 
       def sitemap() = SiteMap(
       Menu("Home") / "index" >> Player.AddUserMenusAfter, // Simple menu form
       Menu(Loc("Help", "generalHelp" :: Nil, "Help", If(() => normalAppMode, () => RedirectResponse("/index")))),
-      Menu(Loc("Help", "fluencyGameHelp" :: Nil, "Help", If(() => fluencygame_exp_2014_07_03_AppMode, () => RedirectResponse("/index")))),
+      Menu(Loc("Fluency Game Help", "fluencyGameHelp" :: Nil, "Help", If(() => fluencygame_exp_2014_07_03_AppMode, () => null ))),
+      // {| y2014_m08_d28_h20_m47_s24 |} wiw: learning lift: how to make a menu item conditionally hidden. The point is that the page should still be accessible.
+      Menu(Loc("Fluency Game Help", "fluencyGameHelp" :: Nil, "Help", Hidden)),
       //Menu(Loc("About", "aboutPage" :: Nil, "About")),
       Menu(Loc("Constitutions", "constitutions" :: Nil, "Constitutions", 
          If(() =>
