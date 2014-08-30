@@ -157,24 +157,23 @@ class Boot
    abstract class AbstractApplicationMode
    case class NormalAppMode extends AbstractApplicationMode
    case class Fluencygame_exp_2014_07_03_AppMode extends AbstractApplicationMode
-   case class Contigame_exp_1_AppMode extends AbstractApplicationMode
+   case class Constigame_exp_1_AppMode extends AbstractApplicationMode
 
    val applicationMode = NormalAppMode
 
    def normalAppMode = (applicationMode == NormalAppMode)
    def fluencygame_exp_2014_07_03_AppMode = (applicationMode == Fluencygame_exp_2014_07_03_AppMode)
-   def constigame_exp_1_AppMode = (applicationMode == ConstiGame_exp_1_AppMode)
+   def constigame_exp_1_AppMode = (applicationMode == Constigame_exp_1_AppMode)
 
       def sitemap() = SiteMap(
       Menu("Home [NAM]") / "index" >> Player.AddUserMenusAfter, // Simple menu form
-      Menu("Instructions [FGE]", ),
-      Menu("Instructions [CGE]"),
-      Menu(Loc("Help [NAM]", "generalHelp" :: Nil, "Help")),
+      Menu(Loc("Instructions [FGE]", "fluencygame_exp_2014_07_03" :: "instructions" :: Nil, "Instructions [FGE]")),
+      Menu(Loc("Instructions [CGE]", "constigame_exp_1" :: "instructions" :: Nil, "Instructions [CGE]" )),
+      Menu(Loc("Help [NAM]", "generalHelp" :: Nil, "Help [NAM]")),
       // Menu(Loc("Help", "generalHelp" :: Nil, "Help", If(() => normalAppMode, () => RedirectResponse("/index")))),
       // Menu(Loc("Help [FGE]", "fluencyGameHelp" :: Nil, "Help", If(() => fluencygame_exp_2014_07_03_AppMode, () => null ))),
       Menu(Loc("Help [FGE]", "fluencyGameHelp" :: Nil, "Help" )),
       Menu(Loc("Help [CGE]", "constiGameHelp" :: Nil, "Help" )),
-
       //Menu(Loc("About", "aboutPage" :: Nil, "About")),
       Menu(Loc("Constitutions", "constitutions" :: Nil, "Constitutions", 
          If(() =>
@@ -245,17 +244,6 @@ class Boot
             )
          )
       ),
-      // this one only for fluencygame_exp_2014_07_03. Is this still needed, I see it is hidden...
-      // {
-      Menu(
-         Loc(
-            "fluencygame_exp_2014_07_03",
-            new Link("fluencygame_exp_2014_07_03" :: "instructions" :: Nil, true),
-            "If you see this, something is wrong: should be hidden",
-            List( Hidden )
-            )
-      ),
-      // }
       Menu(Loc("all", Nil -> true, "If you see this, something is wrong: should be hidden", Hidden))
     )
 
@@ -306,6 +294,8 @@ class Boot
          lvd.append
          {  case List("continueFluencySession") =>
                Left(() => Full( BootHelpers.continueOrStartFluencySession ))
+            case List("fluencygame_exp_2014_07_03") =>
+               Left(() => Full( todo ))
          }
 
          log("   check whether admin account exists, if not: create it (yes, I feel just like God)...")

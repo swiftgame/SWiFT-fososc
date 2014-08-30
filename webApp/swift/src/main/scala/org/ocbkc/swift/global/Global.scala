@@ -161,7 +161,16 @@ object GlobalConstant
          true
       }
    }
+
+
 }
+'
+wiw {| y2014_m08_d30_h20_m02_s52 |} use these in Coord and the dispatcher in Boot to set the right appmode.
+
+abstract class AbstractApplicationMode
+case class NormalAppMode extends AbstractApplicationMode
+case class Fluencygame_exp_2014_07_03_AppMode extends AbstractApplicationMode
+case class Constigame_exp_1_AppMode extends AbstractApplicationMode
 
 object ScalaHelpers
 {  val doNothing = Unit

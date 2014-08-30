@@ -102,6 +102,7 @@ trait CoreTrait[QuerySent__TP <: QuerySent, AnswerLangSent__TP <: CTLsent]
 {  var si: SessionInfo = null
    val sesHis = new SessionHistory()
    val gameCore:TraitGameCore[QuerySent__TP, AnswerLangSent__TP]
+   var applicationMode = NormalAppMode
 
    def currentPlayer:Player
    val currentPlayerId = currentPlayer.id.get
