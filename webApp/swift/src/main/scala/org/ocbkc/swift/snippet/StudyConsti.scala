@@ -17,7 +17,6 @@ import org.ocbkc.swift.coord.ses._
 import org.ocbkc.swift.global.Logging._
 import org.ocbkc.swift.snippet.SesCoord
 
-
 class StudyConsti__EMBED
 {  val sesCoordLR = SesCoord.is // extract session coordinator object from session variable.
    // <&y2012.08.11.12:10:18& better get right constitution from Player info, not from URL id. Or no, that is difficult when someone has access to more than one constitution to study. Just do a check here whether he or she may see the constitution here!>

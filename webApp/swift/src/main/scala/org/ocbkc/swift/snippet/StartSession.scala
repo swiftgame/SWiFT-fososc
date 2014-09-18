@@ -26,6 +26,10 @@ import _root_.net.liftweb.http.js._
 import org.ocbkc.swift.global.Logging._
 
 // TODO &y2013.01.28.20:38:57& move to more general place
+
+/** Note that this object is created immediately when a player opens the website, so it also exists when he or she is not logged into the game.
+@todo: find out what happens if several different users use the same browser session: is it completely full proof? Because they presumably shrea the same SesCoord object...
+  */
 object SesCoord extends SessionVar(new ses.EfeCore(/* User, null, Round.NotStarted*/))
 
 class StartSession
@@ -35,9 +39,9 @@ class StartSession
    {  //var playerAnswerTF = ""
       
       // Begin For test remove
-      println("### begin serialization test")
+      log("### begin serialization test")
       val query = Sharpest(NumResPat(Geq, PatVar("n"), Var("x"), PredApp(Predicate("predje",2),List(Constant("a"), Var("x")))))
-      println("   query serialized: " + query.serialize)
+      log("   query serialized: " + query.serialize)
       
       /*
       //import net.liftweb.json._

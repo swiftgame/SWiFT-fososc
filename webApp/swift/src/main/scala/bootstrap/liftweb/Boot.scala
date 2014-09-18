@@ -151,29 +151,17 @@ class Boot
          r
       }
 
-      //def playerIsLoggedInAndPlayed minSessionsPerPlayer
-
-   // <move to global>
-   abstract class AbstractApplicationMode
-   case class NormalAppMode extends AbstractApplicationMode
-   case class Fluencygame_exp_2014_07_03_AppMode extends AbstractApplicationMode
-   case class Constigame_exp_1_AppMode extends AbstractApplicationMode
-
-   val applicationMode = NormalAppMode
-
-   def normalAppMode = (applicationMode == NormalAppMode)
-   def fluencygame_exp_2014_07_03_AppMode = (applicationMode == Fluencygame_exp_2014_07_03_AppMode)
-   def constigame_exp_1_AppMode = (applicationMode == Constigame_exp_1_AppMode)
+      def normalAppMode = (SesCoord.is.appMode == NormalAppMode)
+      def fluencygame_exp_2014_07_03_AppMode = (SesCoord.is.appMode == Fluencygame_exp_2014_07_03_AppMode)
+      def constigame_exp_1_AppMode = (SesCoord.is.appMode == Constigame_exp_1_AppMode)
 
       def sitemap() = SiteMap(
       Menu("Home [NAM]") / "index" >> Player.AddUserMenusAfter, // Simple menu form
       Menu(Loc("Instructions [FGE]", "fluencygame_exp_2014_07_03" :: "instructions" :: Nil, "Instructions [FGE]")),
       Menu(Loc("Instructions [CGE]", "constigame_exp_1" :: "instructions" :: Nil, "Instructions [CGE]" )),
-      Menu(Loc("Help [NAM]", "generalHelp" :: Nil, "Help [NAM]")),
-      // Menu(Loc("Help", "generalHelp" :: Nil, "Help", If(() => normalAppMode, () => RedirectResponse("/index")))),
-      // Menu(Loc("Help [FGE]", "fluencyGameHelp" :: Nil, "Help", If(() => fluencygame_exp_2014_07_03_AppMode, () => null ))),
-      Menu(Loc("Help [FGE]", "fluencyGameHelp" :: Nil, "Help" )),
-      Menu(Loc("Help [CGE]", "constiGameHelp" :: Nil, "Help" )),
+      Menu(Loc("Help [NAM]", "generalHelp" :: Nil, "Help [NAM]")),// replace with following as soon as HideIf is implemented: Menu(Loc("Help", "generalHelp" :: Nil, "Help", HideIf(() => !normalAppMode))),
+      Menu(Loc("Help [FGE]", "fluencyGameHelp" :: Nil, "Help [FGE]" )),// replace with following as soon as HideIf is implemented: Menu(Loc("Help", "fluencyGameHelp" :: Nil, "Help", HideIf(() => !fluencygame_exp_2014_07_03_AppMode)))
+      Menu(Loc("Help [CGE]", "constiGameHelp" :: Nil, "Help [CGE]" )),// replace with following as soon as HideIf is implemented: Menu(Loc("Help", "constiGameHelp" :: Nil, "Help", HideIf(() => !constigame_exp_1_AppMode)))
       //Menu(Loc("About", "aboutPage" :: Nil, "About")),
       Menu(Loc("Constitutions", "constitutions" :: Nil, "Constitutions", 
          If(() =>
@@ -295,8 +283,11 @@ class Boot
          {  case List("continueFluencySession") =>
                Left(() => Full( BootHelpers.continueOrStartFluencySession ))
             case List("fluencygame_exp_2014_07_03") =>
-               Left(() => Full( todo ))
+               Left(() => Full( BootHelpers.dispatch4switchToAppMode(Fluencygame_exp_2014_07_03_AppMode) ))
+            // TODO add other appmode switches
          }
+
+
 
          log("   check whether admin account exists, if not: create it (yes, I feel just like God)...")
          val admin = Player.find(By(Player.firstName, GlobalConstant.ADMINFIRSTNAME)) match
@@ -569,7 +560,18 @@ object BootHelpers
       }
       NodeSeq.Empty // this will never be reached because of the redirects.
    }
-  
+ 
+
+   /** Switch to fluencygame_exp_2014_07_03 appmode if 
+     */
+   def dispatch4switchToAppMode(am:AppMode) =
+   {  log("dispatch4switchToAppMode called")
+      SesCoord.is.appMode = am
+      S.redirectTo("index")
+
+      NodeSeq.Empty // will not be reached
+   }
+
    def continueOrStartFluencySession =
    {  val lrfs = SesCoord.is.latestRoundFluencySession
       log("   latestRoundFluencySession = " + lrfs)
