@@ -135,6 +135,9 @@ class EfeLang(val playerIdInit:Long) extends TraitGameCore[EfeQuerySent_rb, EfeA
       (bd, fastPredicate, bigPredicate)
    }
 
+   /** @todo: divide this method into 2 separate methods: a method which generates the random stuff, and a method which takes these as an input and calculates all representations that are dependent on the random data. This will, among other things, make writing testing code much easier for testcode writers.
+     */
+
    def generateTranslationProblem:TranslationProblem =
    {  log("generateTranslationProblem started")
       import RandomExtras.pickRandomElementFromList
