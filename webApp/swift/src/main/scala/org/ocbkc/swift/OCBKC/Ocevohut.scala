@@ -98,6 +98,12 @@ trait OcevohutTrait[Genotype__TP]
    }
 }
 
+/** Extension of OcevohutTrait, which assumes each population individual, to be owned by a single human user, and in which the first potential child of a parent, is always assigned to the owner of the parent, while the rest are diverted to other, distinct human users.
+  *
+  */
+trait SingleOwnerBasedOcevohutTrait[Genotype__TP] extends OcevohutTrait[Genotype__TP]
+{  
+}
 /** Use this trait to make a creator of a scaled fitness function based on a population pop, and a globalFitnessFunction. So, extend it and override apply.
   */
 
