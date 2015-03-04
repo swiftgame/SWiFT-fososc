@@ -104,9 +104,9 @@ trait OcevohutTrait[Genotype__TP]
 trait SingleOwnerBasedOcevohutTrait[Genotype__TP] extends OcevohutTrait[Genotype__TP]
 {  
 }
+
 /** Use this trait to make a creator of a scaled fitness function based on a population pop, and a globalFitnessFunction. So, extend it and override apply.
   */
-
 trait CreateScaledFitnessFunctionTrait[Genotype__TP]
 {  def apply(pop:List[Individual[Genotype__TP]], globalFitnessFunction:FitnessFunctionType[Genotype__TP]):LocalSelectiveFitnessFunction[Genotype__TP]
 }

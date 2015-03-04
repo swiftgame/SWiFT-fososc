@@ -91,9 +91,9 @@ object Mail
 
 /** Package intended to do "coarse parallelism": simulating running function-applications in parallel, just as threads, but then without using threads. This works for function-applications in which there is much "waiting" on other external programs or threads (already existing threads, or threads created elsewhere), and each function application does have to do a lot of work from the perspective of the computer.
 
-Note that the function can only be considered a function, if you also consider the callId as an argument to the function (then it produces a single result for each unique combination of arguments).
+Note that the function can only be considered a function, if you also consider the FunAppId as an argument to the function (then it produces a single result for each unique combination of arguments).
 @todo &y2015.02.27.22:36:59& investigate whether this can be made really functional by for example also providing a state argument to the start function.
-In fact already solved, by also creating a "callid", which can be interpreted as a tacit third argument that is unique for each call of the function ApplicableInParallel.
+In fact already solved, by also creating a "FunAppId", which can be interpreted as a tacit third argument that is unique for each call of the function ApplicableInParallel.
   */
 package coarseParallelism
 {
@@ -102,11 +102,11 @@ object TestCoarseParallelism extends ParallelFunAppRequester
    {  val list = List(1,2,3,4,5,8)
       
       object parallelFunction[]
-      {  def start(input:InputType__TP, requester:ParallelFunAppRequester):CallId =
+      {  def start(input:InputType__TP, requester:ParallelFunAppRequester):FunAppId =
          {  log("start( input = " + input.toString)
             // start thread here (normally you assume some external thread to exist or come into existence, but this is for testing purposes.)
             startThread(this)
-            
+              
          }         
       }
    }
@@ -120,22 +120,19 @@ object TestCoarseParallelism extends ParallelFunAppRequester
    }
 }
 
-
-
-
 trait ApplicableInParallel[InputType__TP, ResultType__TP]
-{  /** CallId is a unique identifier for the function application. This allow
+{  /** FunAppId is a unique identifier for the function application. This allow
      */ 
-   private val callId
+   private val funAppId:Int
 
-   def start(input:InputType__TP, requester:ParallelFunAppRequester):CallId =
-   {  // TODO create callId
+   def start(input:InputType__TP, requester:ParallelFunAppRequester):FunAppId =
+   {  // TODO create FunAppId
    }
 
    /** Call this method as soon as the result is known.
      */
    def finish(result:ResultType__TP) =
-   {  requester(input, result, callid)
+   {  requester(input, result, funAppId)
    }  
 }
 
