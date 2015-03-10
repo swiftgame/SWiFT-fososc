@@ -82,9 +82,19 @@ trait OcevohutTrait[Genotype__TP]
    val populationSize:Int
    val numberOfClones:Int
    val numberOfChildren = populationSize - numberOfClones
-   
+   val initialPopulation:List[Genotype__TP]
+
    def oFiFun(g:Genotype__TP):Double = 0d // TODO
    
+   /** This is the central function, it starts the evolutionary process!
+     */
+   def start =
+   {  // WIW &y2015.03.10& an elegant approach is using infinite lists to represent the generation cycles.
+      val parents = selectParents
+      val clones  = selectClones
+      
+   }
+
    /** @returns a Map with items (Individual__TP, number_of_children assigned to this parent)
      */
    def selectParents:Map[IndividualType, Int] =

@@ -19,7 +19,7 @@ import scala.util.parsing.combinator.Parsers //{Success, Failure}
 import org.ocbkc.swift.coord.ses._
 import org.ocbkc.swift.global.Logging._
 
-/** [&y2015.03.04.01:33:22& Still in progress] This is a test used during the development of CoarseParallelism applied to Ocevohut. When the user U goes to this page, it shows an overview of all mutation requests (a table, with each row representing such a request, and also showing the parent). Clicking on the request brings U to a page in which he can enter a child for that particular parent. For now, the genotype consists of point in 3D space. As soon as he submits the new child, it is communicated to Ocevohut (by means of CoarseParallelism).
+   /** [&y2015.03.04.01:33:22& Still in progress] This is a test used during the development of CoarseParallelism applied to Ocevohut. During the boot of Lift, an Ocevohu-system instance is initialised and started. When the user U goes to this page, it shows an overview of all current mutation requests requiring human interaction (a table, with each row representing such a request, and also showing the parent). Clicking on the request brings U to a page in which he can enter a child for that particular parent. For now, the genotype consists of point in 3D space. As soon as he submits the new child, it is communicated to Ocevohut (by means of CoarseParallelism).
   */
 class CoarseParallelismTest
 {  def tableRows(ns:NodeSeq):NodeSeq =
@@ -27,11 +27,12 @@ class CoarseParallelismTest
          "top", chooseTemplate("top", "row", ns),
          "parentId"           -> <b>parent ID</b>,
          "mutationRequestId"  -> <b>mutation request ID</b>
+         "produceChild"       -> <b>produce child!</b>
          )
       header ++
       TODOgetMutationRequests.flatMap(
       mr =>
-      {  WIW 
+      {  
       }
    }
 
