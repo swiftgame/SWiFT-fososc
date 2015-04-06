@@ -42,7 +42,7 @@ class AdminPage
    object JaraDur extends SessionVar[String]("1")
    
    log("AdminPage called")
-   
+   logthreadid   
    //val path = GlobalConstant.WEBAPROOT
    //JsonCmd(2,null,false,Map(command -> 2, params -> false))
 

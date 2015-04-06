@@ -42,6 +42,7 @@ class Boot
    {  JQueryModule.InitParam.JQuery=JQueryModule.JQuery172
       JQueryModule.init()
       log("Boot.boot called")
+      logthreadid
    
       PersDataUpgrader4SWiFT.initialise(GlobalConstant.PERSISTENT_DATA_MAIN_VERSION_PATHNAME, GlobalConstant.MAIN_VERSION)
       PersDataUpgrader4SWiFT.apply
