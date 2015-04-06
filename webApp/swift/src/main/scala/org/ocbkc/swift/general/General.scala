@@ -121,19 +121,25 @@ object TestCoarseParallelism extends ParallelFunAppRequester
 }
 
 trait ApplicableInParallel[InputType__TP, ResultType__TP]
-{  /** FunAppId is a unique identifier for the function application. This allow
-     */ 
-   private val funAppId:Int
+{  val pool = new FunAppPool
 
-   def start(input:InputType__TP, requester:ParallelFunAppRequester):FunAppId =
-   {  // TODO create FunAppId
+   class FunAppThis extends FunApp
+   {  
+   }
+
+   def start(input:InputType__TP, requester:ParallelFunAppRequester) =
+   {  new FunAppThis(input, None)// TODO create FunAppId
    }
 
    /** Call this method as soon as the result is known.
      */
    def finish(result:ResultType__TP) =
    {  requester(input, result, funAppId)
-   }  
+   }
+}
+
+trait FunApp[InputType__TP, ResultType__TP](input: InputType__TP)
+{  var result: Option[ResultType__TP]
 }
 
 trait ParallelFunAppRequester[ResultType__TP]
@@ -141,8 +147,17 @@ trait ParallelFunAppRequester[ResultType__TP]
     */
 
    def receiveResult(input: InputType__TP, result:ResultType__TP)
-
+   {
+   }
 }
 
+/** 
+  * An instance of this objects forms the connection point between the threads requesting a fnction application and the ones carrying it out. It is connected to a specific object which is ApplicableInParallel. Threads who are intended to deliver results of applications, check this object to see whether there are requests applicable to them, and then deliver them here.
+  */
+trait FunAppPool[InputType__TP, ResultType__TP]
+{  TODO perhaps better idea is to integrate "pool" simply in the object ApplicableInParallel. (so, there you only have to store a list of funapprequests).
+   val function:ApplicableInParallel
+   val funappRequests:List[FunAp=p]
 }
+
 }

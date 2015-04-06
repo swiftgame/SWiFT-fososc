@@ -26,7 +26,7 @@ class CoarseParallelismTest
    {  val header = bind(
          "top", chooseTemplate("top", "row", ns),
          "parentId"           -> <b>parent ID</b>,
-         "mutationRequestId"  -> <b>mutation request ID</b>
+         "requestId"  -> <b>mutation request ID</b>
          "produceChild"       -> <b>produce child!</b>
          )
       header ++
