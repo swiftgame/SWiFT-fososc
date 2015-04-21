@@ -97,6 +97,10 @@ In fact already solved, by also creating a "FunAppId", which can be interpreted 
   */
 package coarseParallelism
 {
+object Types
+{  type RequesterCallBackFunctionType = ( => )
+}
+
 object TestCoarseParallelism extends ParallelFunAppRequester 
 {  def main(args: Array[String]) =
    {  val list = List(1,2,3,4,5,8)
@@ -106,7 +110,6 @@ object TestCoarseParallelism extends ParallelFunAppRequester
          {  log("start( input = " + input.toString)
             // start thread here (normally you assume some external thread to exist or come into existence, but this is for testing purposes.)
             startThread(this)
-              
          }         
       }
    }
@@ -123,15 +126,15 @@ object TestCoarseParallelism extends ParallelFunAppRequester
 trait ApplicableInParallel[InputType__TP, ResultType__TP]
 {  val funappRequests:List[FunAppRequest] = Nil
 
-   class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], requesters:List[ParallelFunAppRequester])
+   class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], requesters:List[RequesterCallBackFunctionType])
    {
    }
 
-   def start(input:InputType__TP, requester:ParallelFunAppRequester) =
+   def start(input:InputType__TP, callback: RequesterCallBackFunctionType) =
    {  funappRequests ::= FunApp(input, None)// TODO create FunAppId
    }
 
-   def startBatch(inputList:List[InputType__TP], requester:ParallelFunAppRequester) =
+   def startBatch(inputList:List[InputType__TP], callback:RequesterCallBackFunctionType) =
    {  funappRequests ++= inputList.map{ FunApp(_, None) }
    }
 
