@@ -131,7 +131,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    }
 
    def start(input:InputType__TP, callback: RequesterCallBackFunctionType) =
-   {  funappRequests ::= FunApp(input, None)// TODO create FunAppId
+   {  funappRequests ::= FunAppRequest(input, None, )
    }
 
    def startBatch(inputList:List[InputType__TP], callback:RequesterCallBackFunctionType) =
