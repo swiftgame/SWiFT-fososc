@@ -98,7 +98,8 @@ In fact already solved, by also creating a "FunAppId", which can be interpreted 
 package coarseParallelism
 {
 object Types
-{  type RequesterCallBackFunctionType = ( => )
+{  type ResultProcessorType = ( => )
+{  type ResultProcessorType = ( => )
 }
 
 object TestCoarseParallelism extends ParallelFunAppRequester 
@@ -125,23 +126,38 @@ object TestCoarseParallelism extends ParallelFunAppRequester
 
 trait ApplicableInParallel[InputType__TP, ResultType__TP]
 {  val funappRequests:List[FunAppRequest] = Nil
+   val ResultProcessors:List[ResultProcessorType]
 
-   class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], requesters:List[RequesterCallBackFunctionType])
+   class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], resultProcessors:List[ResultProcessorType])
    {
    }
 
-   def start(input:InputType__TP, callback: RequesterCallBackFunctionType) =
+   def start(input:InputType__TP, resultProcessor: ResultProcessorType) =
    {  funappRequests ::= FunApp(input, None)// TODO create FunAppId
+      resultProcessors ::= resultProcessors
    }
 
-   def startBatch(inputList:List[InputType__TP], callback:RequesterCallBackFunctionType) =
+   def startBatch(inputList:List[InputType__TP], resultProcessor:ResultProcessorType) =
    {  funappRequests ++= inputList.map{ FunApp(_, None) }
    }
 
-   /** Call this method as soon as the result is known.
+   /** Call this method as soon a result is known.
      */
-   def finish(result:ResultType__TP) =
-   {  requester(input, result, funAppId)
+   def postResult(input:InputType__TP, result:ResultType__TP) =
+   {  addResult(input, result)
+      callResultProcessors
+   }
+
+   /** calls result processors if the required results for that processor have arrived.
+     */
+   def callResultProcessors
+   {  resultProcessors.foreach
+      {  rp =>
+         {  funappRequests.containsElementForWhichHoldsTODO
+            { far => { ( far.resultProcessors.contains(rp) && ( far.output != None ) }
+            }
+         }
+      }
    }
 }
 
