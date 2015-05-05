@@ -133,7 +133,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    }
 
    def start(input:InputType__TP, resultProcessor: ResultProcessorType) =
-   {  funappRequests ::= FunApp(input, None)// TODO create FunAppId
+   {  funappRequests ::= FunApp(input, None, TODO)
       resultProcessors ::= resultProcessors
    }
 
