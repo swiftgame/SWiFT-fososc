@@ -123,11 +123,24 @@ object TestCoarseParallelism extends ParallelFunAppRequester
 }
 
 trait ApplicableInParallel[InputType__TP, ResultType__TP]
-{  val funappRequests:List[FunAppRequest] = Nil
-   val ResultProcessors:List[ResultProcessorType]
+{  val ResultProcessors:List[ResultProcessorType]
 
    class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], resultProcessors:List[ResultProcessorType])
    {
+   }
+
+   object FunAppRequest
+   {  private val funappRequests:List[FunAppRequest] = Nil
+
+      /** add it such that inputs are never defined double
+        */
+      def addRequest(input, resultProcessor) =
+      {  funappRequests.find{ far => far.input == input } match
+         {  case Some(far) => far.resultProcessor TODO
+            // wiw&y2015.05.05.17:35:14&
+            case None
+         }
+      }
    }
 
    /** @param resultProcessor The assumption is that this code does not take long to execute. Otherwise, it may make another thread which has other responsibilities as well too slow.
@@ -138,9 +151,9 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
       }
    */
    def request(input:InputType__TP, resultProcessor: ResultProcessorType) =
-   {  funappRequests ::= FunApp(input, None, TODO)
+   {  funappRequests.addRequest(input, resultProcessor)
       resultProcessors ::= resultProcessors
-      callResultProcessors // the request may already have been calculated in the past.
+      callResultProcessors // the results may already have been calculated in the past.
       /* log
          {  o <&y2015.05.05.17:21:39& instead of doing a callResultProcessors, consider only checking whether the requests of the given resultProcessor are granted. Considerations are speed of execution, checking and calling all resultProcessors in the thread that called this method, may slow things down for that thread: it "expected" to only do a request, but in fact it may be running a lot of resultProcessors of previous requests made by "others".
          }
