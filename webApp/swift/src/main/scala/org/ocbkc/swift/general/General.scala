@@ -92,14 +92,14 @@ object Mail
 /** Package intended to do "coarse parallelism": simulating running function-applications in parallel, just as threads, but then without using threads. This works for function-applications in which there is much "waiting" on other external programs or threads (already existing threads, or threads created elsewhere), and each function application does have to do a lot of work from the perspective of the computer.
 
 Note that the function can only be considered a function, if you also consider the FunAppId as an argument to the function (then it produces a single result for each unique combination of arguments).
-@todo &y2015.02.27.22:36:59& investigate whether this can be made really functional by for example also providing a state argument to the start function.
-In fact already solved, by also creating a "FunAppId", which can be interpreted as a tacit third argument that is unique for each call of the function ApplicableInParallel.
-  */
+
+See log of this package in the comment at the end of the package (not included in javadoc).
+*/
+
 package coarseParallelism
 {
 object Types
-{  type ResultProcessorType = ( => )
-{  type ResultProcessorType = ( => )
+{  type ResultProcessorType = ( TODO => TODO )
 }
 
 object TestCoarseParallelism extends ParallelFunAppRequester 
@@ -116,11 +116,9 @@ object TestCoarseParallelism extends ParallelFunAppRequester
    }
 
    TestThread Thread
-   {  
-      
-      mainThreadThingTODO
+   {  mainThreadThingTODO
       {  sleepTODO random seconds
-            
+      }      
    }
 }
 
@@ -132,23 +130,35 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    {
    }
 
-   def start(input:InputType__TP, resultProcessor: ResultProcessorType) =
+   /** @param resultProcessor The assumption is that this code does not take long to execute. Otherwise, it may make another thread which has other responsibilities as well too slow.
+     */
+   /* log
+      {
+         o <&y2015.05.05.17:16:43& perhaps in the future, allow deviation from the current assumption at resultProcessor.>
+      }
+   */
+   def request(input:InputType__TP, resultProcessor: ResultProcessorType) =
    {  funappRequests ::= FunApp(input, None, TODO)
       resultProcessors ::= resultProcessors
+      callResultProcessors // the request may already have been calculated in the past.
+      /* log
+         {  o <&y2015.05.05.17:21:39& instead of doing a callResultProcessors, consider only checking whether the requests of the given resultProcessor are granted. Considerations are speed of execution, checking and calling all resultProcessors in the thread that called this method, may slow things down for that thread: it "expected" to only do a request, but in fact it may be running a lot of resultProcessors of previous requests made by "others".
+         }
+      */
    }
 
-   def startBatch(inputList:List[InputType__TP], resultProcessor:ResultProcessorType) =
+   def request(inputList:List[InputType__TP], resultProcessor:ResultProcessorType) =
    {  funappRequests ++= inputList.map{ FunApp(_, None) }
    }
 
-   /** Call this method as soon a result is known.
+   /** Call this method as soon as a result is known. This code will be called, in general, by another thread than the thread that ran the request.
      */
    def postResult(input:InputType__TP, result:ResultType__TP) =
    {  addResult(input, result)
       callResultProcessors
    }
 
-   /** calls result processors if the required results for that processor have arrived.
+   /** Calls result processors if the required results for that processor have arrived.
      */
    def callResultProcessors
    {  resultProcessors.foreach
@@ -181,6 +191,15 @@ trait ParallelFunAppRequester[ResultType__TP]
 /** 
   * An instance of this objects forms the connection point between the threads requesting a fnction application and the ones carrying it out. It is connected to a specific object which is ApplicableInParallel. Threads who are intended to deliver results of applications, check this object to see whether there are requests applicable to them, and then deliver them here.
   */
+}
 
+/* 
+
+log
+{  [&y2015.05.05.17:08:58& See DSID&y2015.05.05& for a draft drawing with an overview of the high level architecture of the package.]
+<&y2015.02.27.22:36:59& investigate whether this can be made really functional by for example also providing a state argument to the start function.>[&y2015.05.05.17:09:49& In fact already solved, by also creating a "FunAppId", which can be interpreted as a tacit third argument that is unique for each call of the function ApplicableInParallel.]
+}
+
+*/
 
 }
