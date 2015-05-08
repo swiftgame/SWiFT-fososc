@@ -98,8 +98,14 @@ See log of this package in the comment at the end of the package (not included i
 
 package coarseParallelism
 {
+/**
+  */
 object Types
-{  type ResultProcessorType = ( TODO => TODO )
+{  /**   The output Bool = true means that the resultProcessor was applied succesfully.
+     */
+   /* <&y2015.05.08.22:25:30& do I need that (see line 104)?>
+    */
+   type ResultProcessorType[InputType__TP, ResultType__TP] = ( List[InputType__TP] => Bool )
 }
 
 object TestCoarseParallelism extends ParallelFunAppRequester 
@@ -111,7 +117,7 @@ object TestCoarseParallelism extends ParallelFunAppRequester
          {  log("start( input = " + input.toString)
             // start thread here (normally you assume some external thread to exist or come into existence, but this is for testing purposes.)
             startThread(this)
-         }         
+         }       
       }
    }
 
@@ -137,6 +143,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    {  
    }
 
+   // { Code to manipulate and analyse FunAppPairs
    /* log
       { o <should do &y2015.05.08.14:36:10& make a separate class for manipulating lists of funappRequests and put this function there.>
       }
@@ -145,6 +152,10 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    {  fars.map{ far => FunAppPair(far.input, far.output) }
    }
 
+   def AllFunAppPairsDefined:Bool(faps:List[FunAppPairs]) =
+   {  !faps.exists{ fap => fap.output.isEmpty }
+   }
+   // }
 
    object FunAppRequest
    {  private val funappRequests:List[FunAppRequest] = Nil
@@ -166,14 +177,12 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
          }
       }
 
-      case class()
-
       def getRequestsOf(resultProcessor: ResultProcessorType):List[FunAppPair] =
       {  FunAppRequests2FunAppPairs(funappRequests.filter{ far => far.resultProcessors.contain(resultProcessor) })
       }      
    }
 
-   /** If subsequent calls are made, the assumption is that different resultProcessors are provided. If you want to let one resultProcessor process more than one result, call request(inputList ...).
+   /** If subsequent calls are made, the assumption is that different resultProcessors are provided. If you want to let one resultProcessor process more than one result, call request(inputList ...). The idea is that the request is analogous to a function call, for which it also holds that a specific ``piece'' of code is the receiver of the result.
        @param resultProcessor The assumption is that this code does not take long to execute. Otherwise, it may make another thread which has other responsibilities as well too slow.
      */
    /* log
@@ -213,11 +222,10 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    {  resultProcessors.foreach
       {  rp =>
          {  val funAppPairs = funappRequests.getRequestsOf(rp)
-            funAppPairs.
-
-
-            { far => { ( far.resultProcessors.contains(rp) && ( far.output != None ) }
+            if(AllFunAppPairsDefined(funAppPairs))
+            {  rp(
             }
+
          }
       }
    }
