@@ -125,22 +125,51 @@ object TestCoarseParallelism extends ParallelFunAppRequester
 trait ApplicableInParallel[InputType__TP, ResultType__TP]
 {  val ResultProcessors:List[ResultProcessorType]
 
-   class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], resultProcessors:List[ResultProcessorType])
+   case class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], resultProcessors:List[ResultProcessorType])
    {
+   /* log
+      {  o &y2015.05.08.14:15:33& if this code is going to be refactered to do first in first out for resultProcessors, better change to Queue instead of List.
+      }
+   */
    }
+
+   case class FunAppPairs(input:InputType__TP, output:Some[ResultType__TP])
+   {  
+   }
+
+   /* log
+      { o <should do &y2015.05.08.14:36:10& make a separate class for manipulating lists of funappRequests and put this function there.>
+      }
+   */
+   def FunAppRequests2FunAppPairs(fars:List[FunAppRequest]):List[FunAppPair] =
+   {  fars.map{ far => FunAppPair(far.input, far.output) }
+   }
+
 
    object FunAppRequest
    {  private val funappRequests:List[FunAppRequest] = Nil
-
-      /** add it such that inputs are never defined double
+      /* log
+         {  o &y2015.05.08.14:13:23& most efficient may be using a Queue if you want to do first in first out. Also see http://www.scala-lang.org/docu/files/collections-api/collections_40.html      
+         }
+      */
+         
+      /** Add it such that each FunAppRequest in the list has a unique input.
         */
-      def addRequest(input, resultProcessor) =
+      def addRequest(input:InputType__TP, resultProcessor:ResultProcessorType) =
       {  funappRequests.find{ far => far.input == input } match
-         {  case Some(far) => far.resultProcessor TODO
-            // wiw&y2015.05.05.17:35:14&
-            case None
+         {  case Some(far) =>
+            {  far.resultProcessors = resultProcessor :: far.resultProcessors
+            }
+            case None      =>
+            {  far.resultProcessors = FunAppRequest(input, None, List(resultProcessors)
+            }
          }
       }
+
+      def getRequestsOf(resultProcessor: ResultProcessorType):List[FunAppPair] =
+      {  FunAppRequests2FunAppPairs(funappRequests.filter{ far => far.resultProcessors.contain(resultProcessor) })
+      }
+
    }
 
    /** @param resultProcessor The assumption is that this code does not take long to execute. Otherwise, it may make another thread which has other responsibilities as well too slow.
@@ -173,10 +202,18 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
 
    /** Calls result processors if the required results for that processor have arrived.
      */
+
+   /* log
+      {  o <&y2015.05.08.14:30:00& COULDDO: target for optimisation!>
+      }
+   */
    def callResultProcessors
    {  resultProcessors.foreach
       {  rp =>
-         {  funappRequests.containsElementForWhichHoldsTODO
+         {  val funAppPairs = funappRequests.getRequestsOf(rp)
+            funAppPairs.
+
+
             { far => { ( far.resultProcessors.contains(rp) && ( far.output != None ) }
             }
          }
