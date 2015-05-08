@@ -166,16 +166,18 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
          }
       }
 
+      case class()
+
       def getRequestsOf(resultProcessor: ResultProcessorType):List[FunAppPair] =
       {  FunAppRequests2FunAppPairs(funappRequests.filter{ far => far.resultProcessors.contain(resultProcessor) })
-      }
-
+      }      
    }
 
-   /** @param resultProcessor The assumption is that this code does not take long to execute. Otherwise, it may make another thread which has other responsibilities as well too slow.
+   /** If subsequent calls are made, the assumption is that different resultProcessors are provided. If you want to let one resultProcessor process more than one result, call request(inputList ...).
+       @param resultProcessor The assumption is that this code does not take long to execute. Otherwise, it may make another thread which has other responsibilities as well too slow.
      */
    /* log
-      {
+      {  o <& &y2015.05.08.21:49:37& is the assumption on line 176 really needed?>
          o <&y2015.05.05.17:16:43& perhaps in the future, allow deviation from the current assumption at resultProcessor.>
       }
    */
