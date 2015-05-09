@@ -211,8 +211,8 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    {  resultProcessors.foreach
       {  rp =>
          {  val funAppPairs = funappRequests.getRequestsOf(rp)
-            funAppPairs.
-
+            AlFunapppairsdefined(funAppPairs)
+\\ wiwSat May 09 19:22:55 CEST 2015.
 
             { far => { ( far.resultProcessors.contains(rp) && ( far.output != None ) }
             }
