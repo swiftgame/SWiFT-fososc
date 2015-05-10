@@ -98,34 +98,53 @@ See log of this package in the comment at the end of the package (not included i
 
 package coarseParallelism
 {
+/**
+  */
 object Types
-{  type ResultProcessorType = ( TODO => TODO )
+{  
 }
 
-object TestCoarseParallelism extends ParallelFunAppRequester 
-{  def main(args: Array[String]) =
-   {  val list = List(1,2,3,4,5,8)
-      
-      object parallelFunction[]
-      {  def start(input:InputType__TP, requester:ParallelFunAppRequester):FunAppId =
-         {  log("start( input = " + input.toString)
-            // start thread here (normally you assume some external thread to exist or come into existence, but this is for testing purposes.)
-            startThread(this)
-         }         
-      }
+import Types._
+
+object TestCoarseParallelism 
+{  def main(args: Array[String])
+   {  test1
+      test2
+      Unit
    }
 
-   TestThread Thread
-   {  mainThreadThingTODO
+   def test1 =
+   {  val list = List(1,2,3,4,5,8)
+      
+      object parallelListSum extends ApplicableInParallel[List[Int],Int]
+      {      
+      }
+/*
+{  UnfinishedCode
+   mainThreadThingTODO
       {  sleepTODO random seconds
-      }      
+      }
+}
+*/
+   }
+
+   def test2 =
+   {  // start thread here (normally you assume some external thread to exist or come into existence, but this is for testing purposes.)
+      // TODO
    }
 }
 
 trait ApplicableInParallel[InputType__TP, ResultType__TP]
-{  val ResultProcessors:List[ResultProcessorType]
+{  /**   The output Bool = true means that the resultProcessor was applied succesfully.
+     */
+   /* <&y2015.05.08.22:25:30& do I need that (see line 104)?>
+    */
 
-   case class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], resultProcessors:List[ResultProcessorType])
+   type ResultProcessorType = ( List[InputType__TP] => Boolean )
+
+   var ResultProcessors:List[ResultProcessorType[InputType__TP]]
+
+   case class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], var resultProcessors:List[ResultProcessorType[InputType__TP]])
    {
    /* log
       {  o &y2015.05.08.14:15:33& if this code is going to be refactered to do first in first out for resultProcessors, better change to Queue instead of List.
@@ -133,10 +152,11 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    */
    }
 
-   case class FunAppPairs(input:InputType__TP, output:Some[ResultType__TP])
+   case class FunAppPair(input:InputType__TP, output:Some[ResultType__TP])
    {  
    }
 
+   // { Code to manipulate and analyse FunAppPairs
    /* log
       { o <should do &y2015.05.08.14:36:10& make a separate class for manipulating lists of funappRequests and put this function there.>
       }
@@ -145,9 +165,13 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    {  fars.map{ far => FunAppPair(far.input, far.output) }
    }
 
+   def AllFunAppPairsDefined(faps:List[FunAppPair]):Boolean =
+   {  !faps.exists{ fap => fap.output.isEmpty }
+   }
+   // }
 
    object FunAppRequest
-   {  private val funappRequests:List[FunAppRequest] = Nil
+   {  private var funappRequests:List[FunAppRequest] = Nil
       /* log
          {  o &y2015.05.08.14:13:23& most efficient may be using a Queue if you want to do first in first out. Also see http://www.scala-lang.org/docu/files/collections-api/collections_40.html      
          }
@@ -155,27 +179,28 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
          
       /** Add it such that each FunAppRequest in the list has a unique input.
         */
-      def addRequest(input:InputType__TP, resultProcessor:ResultProcessorType) =
+      def addRequest(input:InputType__TP, resultProcessor:ResultProcessorType[InputType__TP]) =
       {  funappRequests.find{ far => far.input == input } match
          {  case Some(far) =>
             {  far.resultProcessors = resultProcessor :: far.resultProcessors
             }
             case None      =>
-            {  far.resultProcessors = FunAppRequest(input, None, List(resultProcessors)
+            {  funappRequests ::= FunAppRequest(input, , List(resultProcessors))
+               // wiw{| y2015_m05_d10_h18_m50_s31 |}
             }
          }
       }
 
-      def getRequestsOf(resultProcessor: ResultProcessorType):List[FunAppPair] =
+      def getRequestsOf(resultProcessor: ResultProcessorType[ResultType__TP]):List[FunAppPair] =
       {  FunAppRequests2FunAppPairs(funappRequests.filter{ far => far.resultProcessors.contain(resultProcessor) })
-      }
-
+      }      
    }
 
-   /** @param resultProcessor The assumption is that this code does not take long to execute. Otherwise, it may make another thread which has other responsibilities as well too slow.
+   /** If subsequent calls are made, the assumption is that different resultProcessors are provided. If you want to let one resultProcessor process more than one result, call request(inputList ...). The idea is that the request is analogous to a function call, for which it also holds that a specific ``piece'' of code is the receiver of the result.
+       @param resultProcessor The assumption is that this code does not take long to execute. Otherwise, it may make another thread which has other responsibilities as well too slow.
      */
    /* log
-      {
+      {  o <& &y2015.05.08.21:49:37& is the assumption on line 176 really needed?>
          o <&y2015.05.05.17:16:43& perhaps in the future, allow deviation from the current assumption at resultProcessor.>
       }
    */
@@ -190,7 +215,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    }
 
    def request(inputList:List[InputType__TP], resultProcessor:ResultProcessorType) =
-   {  funappRequests ++= inputList.map{ FunApp(_, None) }
+   {  inputList.foreach{ request(_, resultProcessor) }
    }
 
    /** Call this method as soon as a result is known. This code will be called, in general, by another thread than the thread that ran the request.
@@ -200,7 +225,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
       callResultProcessors
    }
 
-   /** Calls result processors if the required results for that processor have arrived.
+   /** Calls result processors, but only if all the required results for that processor have arrived.
      */
 
    /* log
@@ -211,45 +236,28 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    {  resultProcessors.foreach
       {  rp =>
          {  val funAppPairs = funappRequests.getRequestsOf(rp)
-            AlFunapppairsdefined(funAppPairs)
-\\ wiwSat May 09 19:22:55 CEST 2015.
-
-            { far => { ( far.resultProcessors.contains(rp) && ( far.output != None ) }
+            if(AllFunAppPairsDefined(funAppPairs))
+            {  rp(funAppPairs)
+// wiwSat May 09 19:22:55 CEST 2015.
             }
          }
       }
    }
 }
 
-trait FunApp[InputType__TP, ResultType__TP](input: InputType__TP)
-{  var result: Option[ResultType__TP]
-}
-
-trait ParallelFunAppRequester[ResultType__TP]
-{  /** @parap input: the original input that was provided when this object called the function ApplicableInParallel.
-    */
-
-   def receiveResult(input: InputType__TP, result:ResultType__TP)
-   {
-   }
-
-   def receiveResultBatch(input: List[Fun], )
-   {
-   }
-}
-
 /** 
   * An instance of this objects forms the connection point between the threads requesting a fnction application and the ones carrying it out. It is connected to a specific object which is ApplicableInParallel. Threads who are intended to deliver results of applications, check this object to see whether there are requests applicable to them, and then deliver them here.
   */
-}
 
 /* 
-
 log
 {  [&y2015.05.05.17:08:58& See DSID&y2015.05.05& for a draft drawing with an overview of the high level architecture of the package.]
 <&y2015.02.27.22:36:59& investigate whether this can be made really functional by for example also providing a state argument to the start function.>[&y2015.05.05.17:09:49& In fact already solved, by also creating a "FunAppId", which can be interpreted as a tacit third argument that is unique for each call of the function ApplicableInParallel.]
 }
 
 */
+
+}
+
 
 }
