@@ -1,5 +1,6 @@
 package org.ocbkc.generic
 {
+import org.ocbkc.swift.global.Logging._
 
 package random
 {
@@ -98,6 +99,7 @@ See log of this package in the comment at the end of the package (not included i
 
 package coarseParallelism
 {
+import org.ocbkc.swift.global.Logging._
 /**
   */
 object Types
@@ -140,11 +142,11 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    /* <&y2015.05.08.22:25:30& do I need that (see line 104)?>
     */
 
-   type ResultProcessorType = ( List[InputType__TP] => Boolean )
+   type ResultProcessorType = ( List[FunAppPairDefined] => Boolean )
 
-   var ResultProcessors:List[ResultProcessorType[InputType__TP]]
+   var resultProcessors:List[ResultProcessorType] = Nil
 
-   case class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], var resultProcessors:List[ResultProcessorType[InputType__TP]])
+   case class FunAppRequest(input:InputType__TP, output:Option[ResultType__TP], var resultProcessors:List[ResultProcessorType])
    {
    /* log
       {  o &y2015.05.08.14:15:33& if this code is going to be refactered to do first in first out for resultProcessors, better change to Queue instead of List.
@@ -152,13 +154,16 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    */
    }
 
-   case class FunAppPair(input:InputType__TP, output:Some[ResultType__TP])
+
+   case class FunAppPairDefined(input:InputType__TP, output:ResultType__TP)
+
+   case class FunAppPair(input:InputType__TP, output:Option[ResultType__TP])
    {  
    }
 
    // { Code to manipulate and analyse FunAppPairs
    /* log
-      { o <should do &y2015.05.08.14:36:10& make a separate class for manipulating lists of funappRequests and put this function there.>
+      { o <should do &y2015.05.08.14:36:10& make a separate class for manipulating lists of funAppRequests and put this function there.>
       }
    */
    def FunAppRequests2FunAppPairs(fars:List[FunAppRequest]):List[FunAppPair] =
@@ -171,7 +176,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    // }
 
    object FunAppRequest
-   {  private var funappRequests:List[FunAppRequest] = Nil
+   {  private var funAppRequests:List[FunAppRequest] = Nil
       /* log
          {  o &y2015.05.08.14:13:23& most efficient may be using a Queue if you want to do first in first out. Also see http://www.scala-lang.org/docu/files/collections-api/collections_40.html      
          }
@@ -179,21 +184,25 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
          
       /** Add it such that each FunAppRequest in the list has a unique input.
         */
-      def addRequest(input:InputType__TP, resultProcessor:ResultProcessorType[InputType__TP]) =
-      {  funappRequests.find{ far => far.input == input } match
+      def addRequest(input:InputType__TP, resultProcessor:ResultProcessorType) =
+      {  funAppRequests.find{ far => far.input == input } match
          {  case Some(far) =>
             {  far.resultProcessors = resultProcessor :: far.resultProcessors
             }
             case None      =>
-            {  funappRequests ::= FunAppRequest(input, , List(resultProcessors))
+            {  funAppRequests ::= FunAppRequest(input, None, List(resultProcessor))
                // wiw{| y2015_m05_d10_h18_m50_s31 |}
             }
          }
       }
 
-      def getRequestsOf(resultProcessor: ResultProcessorType[ResultType__TP]):List[FunAppPair] =
-      {  FunAppRequests2FunAppPairs(funappRequests.filter{ far => far.resultProcessors.contain(resultProcessor) })
+      def getRequestsOf(resultProcessor: ResultProcessorType):List[FunAppPair] =
+      {  FunAppRequests2FunAppPairs(funAppRequests.filter{ far => far.resultProcessors.contains(resultProcessor) })
       }      
+
+      def addResult(input:InputType__TP, result:ResultType__TP)
+      {  logAndThrow("TODO")
+      }
    }
 
    /** If subsequent calls are made, the assumption is that different resultProcessors are provided. If you want to let one resultProcessor process more than one result, call request(inputList ...). The idea is that the request is analogous to a function call, for which it also holds that a specific ``piece'' of code is the receiver of the result.
@@ -204,9 +213,9 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
          o <&y2015.05.05.17:16:43& perhaps in the future, allow deviation from the current assumption at resultProcessor.>
       }
    */
-   def request(input:InputType__TP, resultProcessor: ResultProcessorType) =
-   {  funappRequests.addRequest(input, resultProcessor)
-      resultProcessors ::= resultProcessors
+   def request(input:InputType__TP, resultProcessor: ResultProcessorType)
+   {  FunAppRequest.addRequest(input, resultProcessor)
+      resultProcessors ::= resultProcessor
       callResultProcessors // the results may already have been calculated in the past.
       /* log
          {  o <&y2015.05.05.17:21:39& instead of doing a callResultProcessors, consider only checking whether the requests of the given resultProcessor are granted. Considerations are speed of execution, checking and calling all resultProcessors in the thread that called this method, may slow things down for that thread: it "expected" to only do a request, but in fact it may be running a lot of resultProcessors of previous requests made by "others".
@@ -214,14 +223,14 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
       */
    }
 
-   def request(inputList:List[InputType__TP], resultProcessor:ResultProcessorType) =
+   def request(inputList:List[InputType__TP], resultProcessor:ResultProcessorType)
    {  inputList.foreach{ request(_, resultProcessor) }
    }
 
    /** Call this method as soon as a result is known. This code will be called, in general, by another thread than the thread that ran the request.
      */
    def postResult(input:InputType__TP, result:ResultType__TP) =
-   {  addResult(input, result)
+   {  FunAppRequest.addResult(input, result)
       callResultProcessors
    }
 
@@ -235,9 +244,11 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
    def callResultProcessors
    {  resultProcessors.foreach
       {  rp =>
-         {  val funAppPairs = funappRequests.getRequestsOf(rp)
+         {  val funAppPairs = FunAppRequest.getRequestsOf(rp)
             if(AllFunAppPairsDefined(funAppPairs))
-            {  rp(funAppPairs)
+            {  rp(
+                  funAppPairs.map{ fap => FunAppPairDefined(fap.input, fap.output.get) }
+               )
 // wiwSat May 09 19:22:55 CEST 2015.
             }
          }
