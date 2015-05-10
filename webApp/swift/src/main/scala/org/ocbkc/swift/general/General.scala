@@ -146,7 +146,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
 
    var resultProcessors:List[ResultProcessorType] = Nil
 
-   case class FunAppRequest(input:InputType__TP, output:Option[ResultType__TP], var resultProcessors:List[ResultProcessorType])
+   case class FunAppRequest(input:InputType__TP, var output:Option[ResultType__TP], var resultProcessors:List[ResultProcessorType])
    {
    /* log
       {  o &y2015.05.08.14:15:33& if this code is going to be refactered to do first in first out for resultProcessors, better change to Queue instead of List.
@@ -201,7 +201,27 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
       }      
 
       def addResult(input:InputType__TP, result:ResultType__TP)
-      {  logAndThrow("TODO")
+      {  log("addResult called")
+         log(" input = " + input)
+         log(" result = " + result)
+
+         funAppRequests.find
+         {  far => far.input == input
+         } match
+         {  case Some(far) =>
+            {  far.output match
+               {  case Some(resultInFars) =>
+                  {  log(" result is already defined! (result = " + resultInFars + ")")
+                  }
+                  case None =>
+                  {  far.output = Some(result)
+                  }
+               }               
+            }
+            case None      =>
+            {  log("[POTENTIAL_BUG] I dunno such an input, Dudicoriono, nothing found in the list of funAppRequests. You are an eager bastard, why provide a result when no-one has asked for et?")
+            }
+         }
       }
    }
 
@@ -264,6 +284,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
 log
 {  [&y2015.05.05.17:08:58& See DSID&y2015.05.05& for a draft drawing with an overview of the high level architecture of the package.]
 <&y2015.02.27.22:36:59& investigate whether this can be made really functional by for example also providing a state argument to the start function.>[&y2015.05.05.17:09:49& In fact already solved, by also creating a "FunAppId", which can be interpreted as a tacit third argument that is unique for each call of the function ApplicableInParallel.]
+<{| y2015_m05_d11_h20_m14_s44 |} change all results of function applications to the name "result" (not output)>
 }
 
 */
