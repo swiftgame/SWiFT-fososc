@@ -105,7 +105,7 @@ object Types
      */
    /* <&y2015.05.08.22:25:30& do I need that (see line 104)?>
     */
-   type ResultProcessorType[InputType__TP, ResultType__TP] = ( List[InputType__TP] => Bool )
+   type ResultProcessorType[InputType__TP] = ( List[InputType__TP] => Bool )
 }
 
 object TestCoarseParallelism extends ParallelFunAppRequester 
@@ -120,16 +120,17 @@ object TestCoarseParallelism extends ParallelFunAppRequester
          }       
       }
    }
-
+   /* finish:
    TestThread Thread
    {  mainThreadThingTODO
       {  sleepTODO random seconds
       }      
    }
+   */
 }
 
 trait ApplicableInParallel[InputType__TP, ResultType__TP]
-{  val ResultProcessors:List[ResultProcessorType]
+{  val ResultProcessors:List[ResultProcessorType[InputType_TP]]
 
    case class FunAppRequest(input:InputType__TP, output:Some[ResultType__TP], resultProcessors:List[ResultProcessorType])
    {
@@ -211,7 +212,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
       callResultProcessors
    }
 
-   /** Calls result processors if the required results for that processor have arrived.
+   /** Calls result processors, but only if all the required results for that processor have arrived.
      */
 
    /* log
@@ -223,9 +224,8 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
       {  rp =>
          {  val funAppPairs = funappRequests.getRequestsOf(rp)
             if(AllFunAppPairsDefined(funAppPairs))
-            {  rp(
+            {  rp(funAppPairs)
             }
-
          }
       }
    }
@@ -235,18 +235,6 @@ trait FunApp[InputType__TP, ResultType__TP](input: InputType__TP)
 {  var result: Option[ResultType__TP]
 }
 
-trait ParallelFunAppRequester[ResultType__TP]
-{  /** @parap input: the original input that was provided when this object called the function ApplicableInParallel.
-    */
-
-   def receiveResult(input: InputType__TP, result:ResultType__TP)
-   {
-   }
-
-   def receiveResultBatch(input: List[Fun], )
-   {
-   }
-}
 
 /** 
   * An instance of this objects forms the connection point between the threads requesting a fnction application and the ones carrying it out. It is connected to a specific object which is ApplicableInParallel. Threads who are intended to deliver results of applications, check this object to see whether there are requests applicable to them, and then deliver them here.
