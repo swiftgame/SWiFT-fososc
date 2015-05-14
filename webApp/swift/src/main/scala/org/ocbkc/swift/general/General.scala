@@ -116,11 +116,20 @@ object TestCoarseParallelism
    }
 
    def test1 =
-   {  val list = List(1,2,3,4,5,8)
-      
-      object parallelListSum extends ApplicableInParallel[List[Int],Int]
-      {      
+   {  object parallelListSum extends ApplicableInParallel[List[Int],Int]
+      {  
       }
+
+      val inputList = List(1,2,3,4,5,8)
+
+      def resultProc(fapdl:parallelListSum.FunAppPairDefinedList) =
+      {  log("I just received a result: " + fapdl)
+         true
+      }
+
+      parallelListSum.request(inputList, resultProc(_))
+
+      parallelListSum.postResult(inputList, inputList.sum)
 /*
 {  UnfinishedCode
    mainThreadThingTODO
@@ -156,7 +165,7 @@ trait ApplicableInParallel[InputType__TP, ResultType__TP]
 
 
    case class FunAppPairDefined(input:InputType__TP, output:ResultType__TP)
-
+   type FunAppPairDefinedList = List[FunAppPairDefined]
    case class FunAppPair(input:InputType__TP, output:Option[ResultType__TP])
    {  
    }
