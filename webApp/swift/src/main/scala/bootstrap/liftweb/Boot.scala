@@ -21,7 +21,7 @@ import org.ocbkc.swift.jgit.InitialiseJgit
 import java.io._
 import org.ocbkc.swift.snippet.SesCoord
 import scala.util.Random
-import _root_.net.liftweb.widgets.tablesorter.TableSorter
+import _root_.net.liftmodules.widgets.tablesorter.TableSorter
 import org.ocbkc.swift.test._
 import org.ocbkc.swift.test.Types._
 import org.ocbkc.swift.test.TestHelpers._

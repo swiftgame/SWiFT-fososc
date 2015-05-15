@@ -9,7 +9,7 @@ import org.ocbkc.swift.model._
 import net.liftweb.mapper.By
 import scala.xml.Text
 import net.liftweb.common.Full
-import net.liftweb.widgets.tablesorter.TableSorter
+import _root_.net.liftmodules.widgets.tablesorter.TableSorter
 
 class AnalyseIntermediateTranslations
 { def render(ns: NodeSeq): NodeSeq=

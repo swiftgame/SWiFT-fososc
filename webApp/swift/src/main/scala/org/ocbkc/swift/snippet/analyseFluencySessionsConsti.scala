@@ -9,7 +9,7 @@ import org.ocbkc.swift.global.Logging._
 import org.ocbkc.swift.OCBKC.Constitution
 import org.ocbkc.swift.OCBKC.scoring.{PlayerScores, ConstiScores}
 import org.ocbkc.swift.general.GUIdisplayHelpers._
-import net.liftweb.widgets.tablesorter.TableSorter
+import _root_.net.liftmodules.widgets.tablesorter.TableSorter
 import net.liftweb.common.Full
 import scala.xml.Text
 import net.liftweb.common.Full

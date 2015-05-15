@@ -14,7 +14,7 @@ import org.ocbkc.swift.OCBKC.scoring._
 import Helpers._
 import System.err.println
 import org.ocbkc.swift.model._
-import _root_.net.liftweb.widgets.tablesorter.{TableSorter, DisableSorting, Sorting, Sorter}
+import _root_.net.liftmodules.widgets.tablesorter.{TableSorter, DisableSorting, Sorting, Sorter}
 import org.ocbkc.swift.general.GUIdisplayHelpers._
 import org.ocbkc.swift.global._
 

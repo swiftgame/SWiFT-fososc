@@ -3,7 +3,7 @@ package org.ocbkc.swift.snippet
 import scala.xml._
 import org.ocbkc.swift.global.Logging._
 import org.ocbkc.swift.global.DisplayHelpers._
-import net.liftweb.widgets.tablesorter.TableSorter
+import _root_.net.liftmodules.widgets.tablesorter.TableSorter
 import net.liftweb.util.Helpers._
 import org.ocbkc.swift.OCBKC.{OCBKCinfoPlayer, Constitution}
 import org.ocbkc.swift.OCBKC.scoring.PlayerScores

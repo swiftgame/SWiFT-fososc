@@ -61,7 +61,7 @@ package ses
 
 //import Round._
 // TODO perhaps refactor: shouldn't this conceptually be part of the model and not the coordinator (controller)?
-case class RoundFluencySession
+class RoundFluencySession()
 case object RoundStartSession extends RoundFluencySession
 case object RoundConstiStudy extends RoundFluencySession // only in first session
 case object RoundTranslation extends RoundFluencySession
@@ -76,7 +76,7 @@ case object NotInFluencySession extends RoundFluencySession
 object RoundFluencySessionInfo
 {  val roundsInOrder = List(RoundStartSession, RoundConstiStudy, RoundTranslation, RoundBridgeConstruction, RoundQuestionAttack, RoundAlgorithmicDefenceStage1, RoundAlgorithmicDefenceStage2, RoundFinaliseSession)
 
-   case class EditBehaviour
+   case class EditBehaviour()
 
    def reviewable(rfs:RoundFluencySession):Boolean =
    {  rfs match
@@ -203,7 +203,8 @@ trait CoreTrait[QuerySent__TP <: QuerySent, AnswerLangSent__TP <: CTLsent]
    }
 
    def URstartTranslation =
-   {  if( latestRoundFluencySession == RoundConstiStudy)
+   {  log("URstartTranslation called")
+      if( latestRoundFluencySession == RoundConstiStudy)
       {  log("   gameCore == null " + (gameCore == null) )
          si.startTime(SystemWithTesting.currentTimeMillis).save
          si.startTimeTranslation(si.startTime.is).save
@@ -226,7 +227,8 @@ trait CoreTrait[QuerySent__TP <: QuerySent, AnswerLangSent__TP <: CTLsent]
    }
 
    def URstartAlgorithmicDefenceStage1:QuerySent__TP =
-   {  if( latestRoundFluencySession == RoundQuestionAttack )
+   {  log("URstartAlgorithmicDefenceStage1 called")
+      if( latestRoundFluencySession == RoundQuestionAttack )
       {  latestRoundFluencySession = RoundAlgorithmicDefenceStage1
       }
       gameCore.algorithmicDefenceGenerator
@@ -235,7 +237,8 @@ trait CoreTrait[QuerySent__TP <: QuerySent, AnswerLangSent__TP <: CTLsent]
    /** @todo &y2013.05.09.17:31:41& perhaps better move session storing to URstopTranslation.
      */
    def URstartAlgorithmicDefenceStage2:gameCore.AlgorithmicDefenceResult =
-   {  if( latestRoundFluencySession == RoundAlgorithmicDefenceStage1 )
+   {  log("URstartAlgorithmicDefenceStage2 called")
+      if( latestRoundFluencySession == RoundAlgorithmicDefenceStage1 )
       {  latestRoundFluencySession = RoundAlgorithmicDefenceStage2
       }
       log("[POTENTIAL_BUG] code must only run when latestRoundFluencySession == RoundAlgorithmicDefenceStage1? Or not?")
@@ -261,7 +264,8 @@ trait CoreTrait[QuerySent__TP <: QuerySent, AnswerLangSent__TP <: CTLsent]
    }
 
    def URfinaliseSession =
-   {  if( latestRoundFluencySession == RoundAlgorithmicDefenceStage2 )
+   {  log("URfinaliseSession called")
+      if( latestRoundFluencySession == RoundAlgorithmicDefenceStage2 )
       {  latestRoundFluencySession = RoundFinaliseSession
       } else
       {  log("[POTENTIAL_BUG] cannot go to state RoundFinaliseSession, because player is not in state RoundAlgorithmicDefenceStage2.")
@@ -270,7 +274,7 @@ trait CoreTrait[QuerySent__TP <: QuerySent, AnswerLangSent__TP <: CTLsent]
 
    // rename to URcloseSession
    def closeSession =
-   {  log("closeSession")
+   {  log("closeSession called")
       if( latestRoundFluencySession == NotInFluencySession ) log("   session was already closed.")
       latestRoundFluencySession = NotInFluencySession
    }

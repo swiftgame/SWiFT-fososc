@@ -19,7 +19,7 @@ import org.ocbkc.swift.model._
 import org.eclipse.jgit.revwalk.RevCommit 
 import org.eclipse.jgit.lib.ObjectId
 import org.ocbkc.swift.global.LiftHelpers._
-import _root_.net.liftweb.widgets.tablesorter.TableSorter
+import _root_.net.liftmodules.widgets.tablesorter.TableSorter
 
 class AnalyseFluencySession
 {  val sesCoordLR = SesCoord.is // extract session coordinator object from session variable
