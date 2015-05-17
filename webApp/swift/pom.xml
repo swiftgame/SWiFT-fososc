@@ -58,6 +58,12 @@
 
   <dependencies>
    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_2.11</artifactId>
+      <version>2.2.4</version>
+      <scope>test</scope>
+   </dependency>
+   <dependency>
       <groupId>net.liftweb</groupId>
       <artifactId>lift-json-ext_${scala.version}</artifactId>
       <version>${liftweb.version}</version>
