@@ -215,6 +215,7 @@
 	<plugin>
 	    <groupId>org.codehaus.mojo</groupId>
 	    <artifactId>keytool-maven-plugin</artifactId>
+            <!-- keytool is a java sdk utility to manage a key and certificate management utility. It enables users to administer their own public/private key pairs and associated certificates for use in self-authentication (where the user authenticates himself or herself to other users and services) or data integrity and authentication services, using digital signatures. The keytool command also enables users to cache the public keys (in the form of certificates) of their communicating peers.See: https://docs.oracle.com/javase/8/docs/technotes/tools/unix/keytool.html.  Mojo has created a wrapper around it.  -->
             <version>1.2</version>
 	    <executions>
 		<execution>
