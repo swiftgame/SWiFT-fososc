@@ -215,7 +215,17 @@
 	<plugin>
 	    <groupId>org.codehaus.mojo</groupId>
 	    <artifactId>keytool-maven-plugin</artifactId>
-            <!-- keytool is a java sdk utility to manage a key and certificate management utility. It enables users to administer their own public/private key pairs and associated certificates for use in self-authentication (where the user authenticates himself or herself to other users and services) or data integrity and authentication services, using digital signatures. The keytool command also enables users to cache the public keys (in the form of certificates) of their communicating peers.See: https://docs.oracle.com/javase/8/docs/technotes/tools/unix/keytool.html.  Mojo has created a wrapper around it.  -->
+            <!--
+            keytool is a java sdk utility to manage a key and certificate management utility. It enables users to administer their own public/private key pairs and associated certificates for use in self-authentication (where the user authenticates himself or herself to other users and services) or data integrity and authentication services, using digital signatures. The keytool command also enables users to cache the public keys (in the form of certificates) of their communicating peers.See: https://docs.oracle.com/javase/8/docs/technotes/tools/unix/keytool.html.  Mojo has created a wrapper around it.
+            -->
+            <!-- 
+            {| y2019_m01_d29 |} problem: the genkey goal (see below) is deprecated since version 1.2, and is still used in this pom file. (See: http://www.mojohaus.org/keytool/keytool-maven-plugin/index.html).
+            
+            Currently there is an build-error, which may have something to do with this:
+           [[1;31mERROR[m] Failed to execute goal [32morg.codehaus.mojo:keytool-maven-plugin:1.2:genkey[m [1m(genkey)[m on project [36mswift[m: [1;31mExecution genkey of goal org.codehaus.mojo:keytool-maven-plugin:1.2:genkey failed: Unable to load the mojo 'genkey' (or one of its required components) from the plugin 'org.codehaus.mojo:keytool-maven-plugin:1.2'[m: com.google.inject.ProvisionException: Unable to provision, see the following errors:
+[[1;31mERROR[m] 
+[[1;31mERROR[m] 1) No implementation for org.codehaus.mojo.keytool.KeyToolCommandLineBuilder was bound. 
+            -->
             <version>1.2</version>
 	    <executions>
 		<execution>
